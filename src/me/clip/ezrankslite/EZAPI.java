@@ -55,7 +55,7 @@ public class EZAPI {
 	/**
 	 * get a players rankup progress
 	 * @param p Player to get rankup progress for
-	 * @return progress based on money needed to rankup
+	 * @return progress based on amount of money needed to rankup
 	 */
 	public int getRankupProgress(Player p) {
 		
