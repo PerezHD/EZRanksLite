@@ -19,7 +19,9 @@
  */
 package me.clip.ezrankslite.scoreboard;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import me.clip.ezrankslite.EZRanksLite;
 import me.clip.ezrankslite.multipliers.CostHandler;
@@ -31,6 +33,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+
 public class ScoreboardHandler {
 
 	private EZRanksLite plugin;
@@ -40,6 +44,8 @@ public class ScoreboardHandler {
 	}
 
 	protected HashMap<String, EZScoreboard> boards = new HashMap<String, EZScoreboard>();
+	
+	public static List<String> staffToggled = new ArrayList<String>();
 
 	public boolean hasScoreboard(Player p) {
 		return boards.containsKey(p.getName())
@@ -97,42 +103,188 @@ public class ScoreboardHandler {
 		return progress;
 		
 	}
-
-	public String getProgressBar(int progress, String barColor, String endColor) {
-		String s = "\u2503";
-		if (progress >= 10 && progress <= 19) {
-			return endColor + s + barColor + "&l:&8&l::::::::" + endColor + s;
-		} else if (progress >= 20 && progress <= 29) {
-			return endColor + s + barColor + "&l::&8&l:::::::" + endColor + s;
-		} else if (progress >= 30 && progress <= 39) {
-			return endColor + s + barColor + "&l:::&8&l::::::" + endColor + s;
-		} else if (progress >= 40 && progress <= 49) {
-			return endColor + s + barColor + "&l::::&8&l:::::" + endColor + s;
-		} else if (progress >= 50 && progress <= 59) {
-			return endColor + s + barColor + "&l:::::&8&l::::" + endColor + s;
-		} else if (progress >= 60 && progress <= 69) {
-			return endColor + s + barColor + "&l::::::&8&l:::" + endColor + s;
-		} else if (progress >= 70 && progress <= 79) {
-			return endColor + s + barColor + "&l:::::::&8&l::" + endColor + s;
-		} else if (progress >= 80 && progress <= 89) {
-			return endColor + s + barColor + "&l::::::::&8&l:" + endColor + s;
-		} else if (progress >= 90 && progress <= 99) {
-			return endColor + s + barColor + "&l:::::::::" + endColor + s;
-		} else if (progress >= 100) {
-			return "/rankup";
-		} else {
-			return endColor + s + "&8&l:::::::::" + endColor + s;
-		}
+	
+	@Deprecated
+	public String getProgressBar(int progress, String color1, String color2) {
+		return getProgressBar(progress);
 	}
 
-	public EZScoreboard createScoreboard(Player p) {
+	public String getProgressBar(int progress) {
+		String endColor = plugin.getSbOptions().getpBarEndColor();
+		String barColor = plugin.getSbOptions().getpBarColor();
+		String l = plugin.getSbOptions().getpBarLeftChar();
+		String b = plugin.getSbOptions().getpBarChar();
+		String r = plugin.getSbOptions().getpBarRightChar();
+		String needColor = plugin.getSbOptions().getpBarNeedsColor();
+		if (progress >= 10 && progress <= 19) {
+			return endColor+l+barColor+b+needColor+b+b+b+b+b+b+b+b+endColor+r;
+		} else if (progress >= 20 && progress <= 29) {
+			return endColor+l+barColor+b+b+needColor+b+b+b+b+b+b+b+endColor+r;
+		} else if (progress >= 30 && progress <= 39) {
+			return endColor+l+barColor+b+b+b+needColor+b+b+b+b+b+b+endColor+r;
+		} else if (progress >= 40 && progress <= 49) {
+			return endColor+l+barColor+b+b+b+b+needColor+b+b+b+b+b+endColor+r;
+		} else if (progress >= 50 && progress <= 59) {
+			return endColor+l+barColor+b+b+b+b+b+needColor+b+b+b+b+endColor+r;
+		} else if (progress >= 60 && progress <= 69) {
+			return endColor+l+barColor+b+b+b+b+b+b+needColor+b+b+b+endColor+r;
+		} else if (progress >= 70 && progress <= 79) {
+			return endColor+l+barColor+b+b+b+b+b+b+b+needColor+b+b+endColor+r;
+		} else if (progress >= 80 && progress <= 89) {
+			return endColor+l+barColor+b+b+b+b+b+b+b+b+needColor+b+endColor+r;
+		} else if (progress >= 90 && progress <= 99) {
+			return endColor+l+barColor+b+b+b+b+b+b+b+b+b+endColor+r;
+		} else if (progress >= 100) {
+			return plugin.getSbOptions().getRankup();
+		} else {
+			return endColor+l+needColor+b+b+b+b+b+b+b+b+b+endColor+r;
+		}
+	}
+	
+	private void createStaffScoreboard(Player p) {
 		
 		ScoreboardOptions options = plugin.getSbOptions();
 
 		if (options == null) {
 			options = plugin.loadSBOptions();
 		}
+		
+		String name = p.getName();
+		
+		String rank = plugin.getVault().getGroup(p);
+		
+		String displayName = p.getDisplayName();
+		
+		String online = String.valueOf(Bukkit.getServer().getOnlinePlayers().length);
+		
+		String max = String.valueOf(Bukkit.getServer().getMaxPlayers());
+		
+		int staffOnline = EZRanksLite.staffOnline.size();
+		
+		int playersOnline = Bukkit.getServer().getOnlinePlayers().length-staffOnline;
+		
+		String ping = String.valueOf(((CraftPlayer) p).getHandle().ping);
+		
+		String op = String.valueOf(p.isOp());
+		
+		String gm = String.valueOf(p.getGameMode().name());
+		
+		String flySpeed = String.valueOf(p.getFlySpeed());
+		
+		String entities = String.valueOf(p.getWorld().getEntities().size());
+		
+		String world = String.valueOf(p.getWorld().getName());
+		
+		String loadedWorlds = String.valueOf(Bukkit.getServer().getWorlds().size());
+		
+		String tps = "20"; //lol
+		
+		if (plugin.getEssentials() != null) {
+			
+			int tp = (int) plugin.getEssentials().getTimer().getAverageTPS();
+			
+			tps = String.valueOf(tp);
+			
+			if (plugin.getEssentials().getUser(p).getNickname() != null) {
+				name = String.valueOf(plugin.getEssentials().getUser(p).getNickname());
+			}
+		}
+		
+		String votes = "0";
+		String votesReceived = "0";
+		String totalVotesNeeded = "0";
+		
+		if (EZRanksLite.useVoteParty) {
+			votes = String.valueOf(VotePartyAPI.getCurrentVoteCounter());
+			votesReceived = String.valueOf(VotePartyAPI.getVotes());
+			totalVotesNeeded = String.valueOf(VotePartyAPI.getTotalVotesNeeded());
+		}
 
+		
+		String title = options.getStaffTitle().replace("%player%", name)
+				.replace("%displayname%", displayName)
+				.replace("%rank%", rank)
+				.replace("%online%", online)
+				.replace("%onlinemax%", max)
+				.replace("%onlinestaff%", String.valueOf(staffOnline))
+				.replace("%onlineplayers%", String.valueOf(playersOnline))
+				.replace("%ping%", ping)
+				.replace("%tps%", tps)
+				.replace("%op%", op)
+				.replace("%gamemode%", gm)
+				.replace("%flyspeed%", flySpeed)
+				.replace("%entities%", entities)
+				.replace("%world%", world)
+				.replace("%loadedworlds%", loadedWorlds)
+				.replace("%votes%", votes)
+				.replace("%votesreceived%", votesReceived)
+				.replace("%votesneeded%", totalVotesNeeded);
+		
+		title = plugin.getPlaceholders().getGlobalPlaceholders(title);
+		title = plugin.getPlaceholders().getPlayerPlaceholders(name, title);
+
+		EZScoreboard sb = new EZScoreboard(
+				ChatColor.translateAlternateColorCodes('&', title));
+		
+		for (String s : options.getStaffText()) {
+
+			if (s.equalsIgnoreCase("blank")) {
+
+				sb.blank();
+
+			} else {
+				String send = s.replace("%player%", name)
+						.replace("%displayname%", displayName)
+						.replace("%rank%", rank)
+						.replace("%online%", online)
+						.replace("%onlinemax%", max)
+						.replace("%onlinestaff%", String.valueOf(staffOnline))
+						.replace("%onlineplayers%", String.valueOf(playersOnline))
+						.replace("%ping%", ping)
+						.replace("%tps%", tps)
+						.replace("%op%", op)
+						.replace("%gamemode%", gm)
+						.replace("%flyspeed%", flySpeed)
+						.replace("%entities%", entities)
+						.replace("%world%", world)
+						.replace("%loadedworlds%", loadedWorlds)
+						.replace("%votes%", votes)
+						.replace("%votesreceived%", votesReceived)
+						.replace("%votesneeded%", totalVotesNeeded);
+
+				send = plugin.getPlaceholders().getGlobalPlaceholders(send);
+				send = plugin.getPlaceholders().getPlayerPlaceholders(name, send);
+
+				sb.setLine(ChatColor.translateAlternateColorCodes('&', send));
+
+			}
+
+		}
+		
+		
+		sb.build();
+		sb.send(p);
+		boards.put(p.getName(), sb);
+		return;
+		
+		
+	}
+
+	public void createScoreboard(Player p) {
+		
+		ScoreboardOptions options = plugin.getSbOptions();
+
+		if (options == null) {
+			options = plugin.loadSBOptions();
+		}
+		
+		if (options.useStaffScoreboard() 
+				&& staffToggled != null 
+				&& staffToggled.contains(p.getUniqueId().toString())) {
+			createStaffScoreboard(p);
+			return;
+		}
+		
 		int online = Bukkit.getServer().getOnlinePlayers().length;
 
 		OfflinePlayer pl = p;
@@ -147,13 +299,13 @@ public class ScoreboardHandler {
 
 		String cost = "0";
 
-		String votes = "";
-		String votesReceived = "";
-		String totalVotesNeeded = "";
+		String votes = "0";
+		String votesReceived = "0";
+		String totalVotesNeeded = "0";
 
 		int pro = 0;
 
-		String progress = "";
+		String progress = "0";
 
 		String progressBar = "";
 		
@@ -161,16 +313,17 @@ public class ScoreboardHandler {
 		
 		String rankPrefix = "";
 		
-		String difference = "";
+		String difference = "0";
 
 		if (EZRanksLite.useVoteParty) {
-			votes = VotePartyAPI.getCurrentVoteCounter() + "";
-			votesReceived = VotePartyAPI.getVotes()+"";
-			totalVotesNeeded = VotePartyAPI.getTotalVotesNeeded()+"";
+			votes = String.valueOf(VotePartyAPI.getCurrentVoteCounter());
+			votesReceived = String.valueOf(VotePartyAPI.getVotes());
+			totalVotesNeeded = String.valueOf(VotePartyAPI.getTotalVotesNeeded());
 		}
 
 		if (plugin.getRankHandler().hasRankData(rank)
 				&& plugin.getRankHandler().getRankData(rank).hasRankups()) {
+			
 			rankPrefix = plugin.getRankHandler().getRankData(rank).getPrefix();
 			
 			for (EZRankup r : plugin.getRankHandler().getRankData(rank)
@@ -198,12 +351,50 @@ public class ScoreboardHandler {
 
 			}
 		}
+		
+		String displayName = p.getDisplayName();
+		
+		String max = String.valueOf(Bukkit.getServer().getMaxPlayers());
+		
+		int staffOnline = EZRanksLite.staffOnline.size();
+		
+		int playersOnline = Bukkit.getServer().getOnlinePlayers().length-staffOnline;
+		
+		String ping = String.valueOf(((CraftPlayer) p).getHandle().ping);
+		
+		String world = String.valueOf(p.getWorld().getName());
+		
+		String tps = "20"; //lol
+		
+		if (plugin.getEssentials() != null) {
+			
+			int tp = (int) plugin.getEssentials().getTimer().getAverageTPS();
+			
+			tps = String.valueOf(tp);
+			
+			
+			
+			if (plugin.getEssentials().getUser(p).getNickname() != null) {
+				name = String.valueOf(plugin.getEssentials().getUser(p).getNickname());
+			}
+		}
 
 		String title = options.getTitle().replace("%player%", name)
-				.replace("%rankfrom%", rank).replace("%currentrank%", rank)
-				.replace("%rankto%", nextRank).replace("%rankup%", nextRank)
-				.replace("%cost%", cost).replace("%rankupcost%", cost)
-				.replace("%balance%", bal).replace("%bal%", bal)
+				.replace("%displayname%", displayName)
+				.replace("%onlinemax%", max)
+				.replace("%onlinestaff%", String.valueOf(staffOnline))
+				.replace("%onlineplayers%", String.valueOf(playersOnline))
+				.replace("%ping%", ping)
+				.replace("%tps%", tps)
+				.replace("%world%", world)
+				.replace("%rankfrom%", rank)
+				.replace("%currentrank%", rank)
+				.replace("%rankto%", nextRank)
+				.replace("%rankup%", nextRank)
+				.replace("%cost%", cost)
+				.replace("%rankupcost%", cost)
+				.replace("%balance%", bal)
+				.replace("%bal%", bal)
 				.replace("%online%", online + "")
 				.replace("%progress%", progress)
 				.replace("%progressbar%", progressBar)
@@ -216,6 +407,7 @@ public class ScoreboardHandler {
 				.replace("%needed%", difference);
 		title = plugin.getPlaceholders().getGlobalPlaceholders(title);
 		title = plugin.getPlaceholders().getPlayerPlaceholders(name, title);
+		
 
 		EZScoreboard sb = new EZScoreboard(
 				ChatColor.translateAlternateColorCodes('&', title));
@@ -228,12 +420,21 @@ public class ScoreboardHandler {
 
 			} else {
 				String send = s.replace("%player%", name)
+						.replace("%displayname%", displayName)
+						.replace("%onlinemax%", max)
+						.replace("%onlinestaff%", String.valueOf(staffOnline))
+						.replace("%onlineplayers%", String.valueOf(playersOnline))
+						.replace("%ping%", ping)
+						.replace("%tps%", tps)
+						.replace("%world%", world)
 						.replace("%rankfrom%", rank)
 						.replace("%currentrank%", rank)
 						.replace("%rankto%", nextRank)
-						.replace("%rankup%", nextRank).replace("%cost%", cost)
+						.replace("%rankup%", nextRank)
+						.replace("%cost%", cost)
 						.replace("%rankupcost%", cost)
-						.replace("%balance%", bal).replace("%bal%", bal)
+						.replace("%balance%", bal)
+						.replace("%bal%", bal)
 						.replace("%online%", online + "")
 						.replace("%progress%", progress)
 						.replace("%progressbar%", progressBar)
@@ -257,7 +458,6 @@ public class ScoreboardHandler {
 		sb.build();
 		sb.send(p);
 		boards.put(p.getName(), sb);
-		return sb;
 	}
 
 }

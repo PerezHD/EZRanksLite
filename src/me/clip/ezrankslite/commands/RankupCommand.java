@@ -32,7 +32,6 @@ import me.clip.ezrankslite.rankdata.EZRank;
 import me.clip.ezrankslite.rankdata.EZRankup;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -63,7 +62,6 @@ public class RankupCommand implements CommandExecutor {
 		}
 
 		Player p = (Player) sender;
-		OfflinePlayer pll = p;
 
 		String rank = plugin.getHooks().getGroup(p);
 
@@ -101,7 +99,7 @@ public class RankupCommand implements CommandExecutor {
 			}
 			
 			
-			if (ezrank.hasRankups() == false) {
+			if (!ezrank.hasRankups()) {
 				plugin.sms(p, Lang.RANKUP_NO_RANKUPS_AVAILABLE
 						.getConfigValue(new String[] { rank }));
 				return true;
@@ -119,7 +117,7 @@ public class RankupCommand implements CommandExecutor {
 					return true;
 				}
 
-				double balance = plugin.getEco().getBalance(pll);
+				double balance = plugin.getEco().getBalance(p);
 
 				double needed = Double.parseDouble(ru.getCost());
 
@@ -134,12 +132,10 @@ public class RankupCommand implements CommandExecutor {
 										 .replace("%rankprefix%", ezrank.getPrefix())
 										 .replace("%rankupprefix%", ru.getPrefix())
 										 .replace("%player%", p.getName())
-										 .replace("%progress%", plugin.getBoardhandler()
+										 .replace("%progress%", plugin.getBoardHandler()
 												                      .getProgress(balance, String.valueOf(needed)) + "")
-										 .replace("%progressbar%", plugin.getBoardhandler().getProgressBar(plugin.getBoardhandler()
-																	     .getProgress(balance, String.valueOf(needed)),
-																   plugin.getSbOptions().getpBarColor(),
-																   plugin.getSbOptions().getpBarEndColor()))
+										 .replace("%progressbar%", plugin.getBoardHandler().getProgressBar(plugin.getBoardHandler()
+																	     .getProgress(balance, String.valueOf(needed))))
 										.replace("%difference%", EZRanksLite.getDifference(balance, needed))
 										.replace("%costdifference%", EZRanksLite.getDifference(balance, needed))
 										.replace("%world%", p.getWorld().getName())
@@ -151,7 +147,7 @@ public class RankupCommand implements CommandExecutor {
 
 				if (ru.isConfirmToRank()) {
 
-					if (wtc.containsKey(p.getName()) == false) {
+					if (!wtc.containsKey(p.getName())) {
 						wtc.put(p.getName(), ru.getRank());
 						plugin.sms(p, Lang.RANKUP_CONFIRMATION
 								.getConfigValue(new String[] {
@@ -276,7 +272,7 @@ public class RankupCommand implements CommandExecutor {
 				}
 
 				double needed = Double.parseDouble(ezrank.getResetCost());
-				double has = plugin.getEco().getBalance(pll);
+				double has = plugin.getEco().getBalance(p);
 				if (has < needed) {
 					plugin.sms(p, Lang.RESET_NOT_ENOUGH_MONEY
 							.getConfigValue(new String[] {
@@ -365,7 +361,7 @@ public class RankupCommand implements CommandExecutor {
 				return true;
 			}
 			
-			if (ezrank.hasRankups() == false) {
+			if (!ezrank.hasRankups()) {
 				plugin.sms(p, Lang.RANKUP_NO_RANKUPS_AVAILABLE
 						.getConfigValue(new String[] { rank }));
 				return true;
@@ -400,7 +396,7 @@ public class RankupCommand implements CommandExecutor {
 				return true;
 			}
 
-			double balance = plugin.getEco().getBalance(pll);
+			double balance = plugin.getEco().getBalance(p);
 			double needed = Double.parseDouble(rankup.getCost());
 
 			needed = CostHandler.getMultiplier(p, needed);
@@ -417,29 +413,9 @@ public class RankupCommand implements CommandExecutor {
 									.replace("%rankupprefix%",
 											rankup.getPrefix())
 									.replace("%player%", p.getName())
-									.replace(
-											"%progress%",
-											plugin.getBoardhandler()
-													.getProgress(
-															balance,
-															String.valueOf(needed))
-													+ "")
-									.replace(
-											"%progressbar%",
-											plugin.getBoardhandler()
-													.getProgressBar(
-															plugin.getBoardhandler()
-																	.getProgress(
-																			balance,
-																			String.valueOf(needed)),
-															plugin.getSbOptions()
-																	.getpBarColor(),
-															plugin.getSbOptions()
-																	.getpBarEndColor()))
-									.replace(
-											"%difference%",
-											EZRanksLite.getDifference(balance,
-													needed))
+									.replace("%progress%", plugin.getBoardHandler().getProgress(balance, String.valueOf(needed))+"")
+									.replace("%progressbar%", plugin.getBoardHandler().getProgressBar(plugin.getBoardHandler().getProgress(balance, String.valueOf(needed))))
+									.replace("%difference%", EZRanksLite.getDifference(balance, needed))
 									.replace(
 											"%costdifference%",
 											EZRanksLite.getDifference(balance,
@@ -456,7 +432,7 @@ public class RankupCommand implements CommandExecutor {
 			}
 
 			if (rankup.isConfirmToRank()) {
-				if (wtc.containsKey(p.getName()) == false) {
+				if (!wtc.containsKey(p.getName())) {
 					wtc.put(p.getName(), rankup.getRank());
 
 					plugin.sms(p, Lang.RANKUP_CONFIRMATION_MULTIPLE_RANKUPS
@@ -466,12 +442,12 @@ public class RankupCommand implements CommandExecutor {
 									ezrank.getRank(), ezrank.getPrefix(),
 									rankup.getPrefix() }));
 
-					final String plname = p.getName();
+					final String plName = p.getName();
 					Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin,
 							new Runnable() {
 								public void run() {
-									if (wtc.containsKey(plname)) {
-										wtc.remove(plname);
+									if (wtc.containsKey(plName)) {
+										wtc.remove(plName);
 									}
 								}
 							}, 20 * 15);

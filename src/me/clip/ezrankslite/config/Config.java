@@ -64,13 +64,23 @@ public class Config {
 				"scoreboard.display",
 				Arrays.asList(new String[] { "&cCurrent Rank:", "%rankfrom%",
 						"blank", "&c/rankup:", "%rankto%", "blank", "&cCost:",
-						"&a$&f%cost%", "&cBalance:",
-						"&a$&f%balance%" }));
+						"&a$&f%cost%", "&cBalance:", "&a$&f%balance%" }));
 		config.addDefault("scoreboard.no_rankups", "&cnone");
 		config.addDefault("scoreboard.can_rankup", "&a/rankup");
 		config.addDefault("scoreboard.progress_bar.bar_color", "&a");
-		config.addDefault("scoreboard.progress_bar.end_color", "&f");
+		config.addDefault("scoreboard.progress_bar.needs_color", "&8");
+		config.addDefault("scoreboard.progress_bar.end_color", "&f&l");
+		config.addDefault("scoreboard.progress_bar.left_character", "\u2503");
+		config.addDefault("scoreboard.progress_bar.bar_character", ":");
+		config.addDefault("scoreboard.progress_bar.right_character", "\u2503");
 		config.addDefault("scoreboard.disabled_worlds", Arrays.asList(new String[] {"world_nether", "world_the_end"}));
+		config.addDefault("staff_scoreboard.enabled", true);
+		config.addDefault("staff_scoreboard.title", "&cStaff");
+		config.addDefault("staff_scoreboard.display",
+				Arrays.asList(new String[] { "&cPlayers online:", "%onlineplayers%/%onlinemax%",
+						"blank", "&cStaff online:", "%onlinestaff%", "blank", "&cTPS:",
+						"&a%tps%", "&cPing:",
+						"&a%ping%"}));
 		config.addDefault("money.fix_thousands", true);
 		config.addDefault("money.fix_millions", true);
 		config.addDefault("money.thousands_format", "k");
@@ -82,6 +92,35 @@ public class Config {
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
 	}
+	
+	public String getSbProgressLeftChar() {
+		return plugin.getConfig().getString("scoreboard.progress_bar.left_character");
+	}
+	
+	public String getSbProgressRightChar() {
+		return plugin.getConfig().getString("scoreboard.progress_bar.right_character");
+	}
+	
+	public String getSbProgressBarChar() {
+		return plugin.getConfig().getString("scoreboard.progress_bar.bar_character");
+	}
+	public String getSbProgressBarNeedsColor() {
+		return plugin.getConfig().getString("scoreboard.progress_bar.needs_color");
+	}
+	
+	public boolean useStaffSb() {
+		return plugin.getConfig().getBoolean("staff_scoreboard.enabled");
+	}
+	
+	public List<String> getStaffSbText() {
+		return plugin.getConfig().getStringList("staff_scoreboard.display");
+	}
+	
+	public String getStaffSbTitle() {
+		return plugin.getConfig().getString("staff_scoreboard.title");
+	}
+	//ill look at it in a bit
+	
 	
 	
 	public boolean checkUpdates() {

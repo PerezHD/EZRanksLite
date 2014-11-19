@@ -22,7 +22,6 @@ public class Hooks {
 		else {
 			return plugin.getVault().getGroup(p);
 		}
-		
 	}
 
 	public String[] getGroups(Player p) {
@@ -50,7 +49,6 @@ public class Hooks {
 		else {
 			return plugin.getVault().getServerGroups();
 		}
-		
 	}
 	
 	public boolean isValidServerGroup(String group) {

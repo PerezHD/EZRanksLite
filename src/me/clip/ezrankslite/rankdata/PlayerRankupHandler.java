@@ -30,11 +30,7 @@ import me.clip.ezrankslite.EZRanksLite;
 public class PlayerRankupHandler {
 	
 	EZRanksLite plugin;
-	
-	/**
-	 * Handles rank up and reset command execution/economy transactions
-	 * @param instance
-	 */
+
 	public PlayerRankupHandler(EZRanksLite instance) {
 		plugin = instance;
 	}
@@ -105,12 +101,11 @@ public class PlayerRankupHandler {
 		plugin.getEco().withdrawMoney(needed, pl);
 		
 		if (plugin.useScoreboard()) {
-			if (plugin.getBoardhandler().hasScoreboard(p)) {
-				plugin.getBoardhandler().updateScoreboard(p);
+			if (plugin.getBoardHandler().hasScoreboard(p)) {
+				plugin.getBoardHandler().updateScoreboard(p);
 			}
 			
 		}
-		return;
 	}
 	
 	/**
@@ -205,8 +200,8 @@ public class PlayerRankupHandler {
 		}	
 		
 		if (plugin.useScoreboard()) {
-			if (plugin.getBoardhandler().hasScoreboard(p)) {
-				plugin.getBoardhandler().updateScoreboard(p);
+			if (plugin.getBoardHandler().hasScoreboard(p)) {
+				plugin.getBoardHandler().updateScoreboard(p);
 			}
 		}
 		

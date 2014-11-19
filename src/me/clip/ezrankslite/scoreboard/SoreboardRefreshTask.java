@@ -27,7 +27,7 @@ public class SoreboardRefreshTask implements Runnable {
 			return;
 		}
 		
-		plugin.getBoardhandler().updateScoreboard(p);
+		plugin.getBoardHandler().updateScoreboard(p);
 		
 	}
 }

@@ -19,7 +19,10 @@
  */
 package me.clip.ezrankslite.listeners;
 
+import java.util.ArrayList;
+
 import me.clip.ezrankslite.EZRanksLite;
+import me.clip.ezrankslite.scoreboard.ScoreboardHandler;
 import me.clip.ezrankslite.updater.Updater;
 
 import org.bukkit.entity.Player;
@@ -43,6 +46,15 @@ public class PlayerListener implements Listener {
 	public void onJoin(PlayerJoinEvent e) {
 
 		Player p = e.getPlayer();
+		
+		if (p.hasPermission("ezranks.staff")) {
+			if (EZRanksLite.staffOnline == null) {
+				EZRanksLite.staffOnline = new ArrayList<String>();
+			}
+			if (!EZRanksLite.staffOnline.contains(p.getName())) {
+				EZRanksLite.staffOnline.add(p.getName());
+			}
+		}
 
 		if (p.hasPermission("ezranks.admin")) {
 			
@@ -68,7 +80,7 @@ public class PlayerListener implements Listener {
 			return;
 		}
 
-		plugin.getBoardhandler().createScoreboard(p);
+		plugin.getBoardHandler().createScoreboard(p);
 
 	}
 
@@ -84,35 +96,61 @@ public class PlayerListener implements Listener {
 		if (plugin.getSbOptions().getDisabledWorlds() != null
 				&& plugin.getSbOptions().getDisabledWorlds()
 						.contains(p.getLocation().getWorld().getName())) {
-			plugin.getBoardhandler().removeScoreboard(p);
+			plugin.getBoardHandler().removeScoreboard(p);
 		} else {
-			plugin.getBoardhandler().createScoreboard(p);
+			plugin.getBoardHandler().createScoreboard(p);
 		}
 
 	}
 
 	@EventHandler
 	public void onLeave(PlayerQuitEvent e) {
+		
+		Player p = e.getPlayer();
+		
+		if (p.hasPermission("ezranks.staff")) {
+			if (EZRanksLite.staffOnline != null 
+				&& EZRanksLite.staffOnline.contains(p.getName())) {
+				EZRanksLite.staffOnline.remove(p.getName());
+			}
+		}
 
 		if (!plugin.useScoreboard()) {
 			return;
 		}
 
-		Player p = e.getPlayer();
-
-		plugin.getBoardhandler().removeScoreboard(p);
+		plugin.getBoardHandler().removeScoreboard(p);
+		
+		if (ScoreboardHandler.staffToggled != null || !ScoreboardHandler.staffToggled.isEmpty()) {
+			if (ScoreboardHandler.staffToggled.contains(p.getUniqueId().toString())) {
+				ScoreboardHandler.staffToggled.remove(p.getUniqueId().toString());
+			}
+		}
 	}
 
 	@EventHandler
 	public void onKick(PlayerKickEvent e) {
 
+		Player p = e.getPlayer();
+		
+		if (p.hasPermission("ezranks.staff")) {
+			if (EZRanksLite.staffOnline != null 
+				&& EZRanksLite.staffOnline.contains(p.getName())) {
+				EZRanksLite.staffOnline.remove(p.getName());
+			}
+		}
+		
 		if (!plugin.useScoreboard()) {
 			return;
 		}
 
-		Player p = e.getPlayer();
-
-		plugin.getBoardhandler().removeScoreboard(p);
+		plugin.getBoardHandler().removeScoreboard(p);
+		
+		if (ScoreboardHandler.staffToggled != null || !ScoreboardHandler.staffToggled.isEmpty()) {
+			if (ScoreboardHandler.staffToggled.contains(p.getUniqueId().toString())) {
+				ScoreboardHandler.staffToggled.remove(p.getUniqueId().toString());
+			}
+		}
 	}
 
 }

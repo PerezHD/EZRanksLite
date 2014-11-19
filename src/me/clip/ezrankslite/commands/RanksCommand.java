@@ -62,11 +62,11 @@ public class RanksCommand implements CommandExecutor {
 		
 		if (plugin.getRanksHeader() != null) {
 		for (String header : plugin.getRanksHeader()) {
-			if (header.equalsIgnoreCase("none") || header.equalsIgnoreCase("off")) {}
-			else {
-				plugin.sms(p, header);
-			}
-		}
+            if (header.equalsIgnoreCase("none") && header.equalsIgnoreCase("off")) {
+            } else {
+                plugin.sms(p, header);
+            }
+        }
 		}
 		
 		

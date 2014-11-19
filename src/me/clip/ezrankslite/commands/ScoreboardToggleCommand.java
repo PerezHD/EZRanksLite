@@ -58,14 +58,14 @@ public class ScoreboardToggleCommand implements CommandExecutor {
 					return true;
 				}
 				
-				if (plugin.getBoardhandler().hasScoreboard(target)) {
-					plugin.getBoardhandler().removeScoreboard(target);
+				if (plugin.getBoardHandler().hasScoreboard(target)) {
+					plugin.getBoardHandler().removeScoreboard(target);
 					plugin.sms(sender, Lang.SCOREBOARD_TOGGLE_OFF_OTHERS.getConfigValue(new String[] {
 							target.getName()
 					}));
 				}
 				else {
-					plugin.getBoardhandler().createScoreboard(target);
+					plugin.getBoardHandler().createScoreboard(target);
 					plugin.sms(sender, Lang.SCOREBOARD_TOGGLE_ON_OTHERS.getConfigValue(new String[] {
 							target.getName()
 					}));
@@ -83,12 +83,12 @@ public class ScoreboardToggleCommand implements CommandExecutor {
 		Player p = (Player) sender;
 		
 		if (args.length == 0) {
-		if (plugin.getBoardhandler().hasScoreboard(p)) {
-			plugin.getBoardhandler().removeScoreboard(p);
+		if (plugin.getBoardHandler().hasScoreboard(p)) {
+			plugin.getBoardHandler().removeScoreboard(p);
 			plugin.sms(sender, Lang.SCOREBOARD_TOGGLE_OFF_SELF.getConfigValue(null));
 		}
 		else {
-			plugin.getBoardhandler().createScoreboard(p);
+			plugin.getBoardHandler().createScoreboard(p);
 			plugin.sms(sender, Lang.SCOREBOARD_TOGGLE_ON_SELF.getConfigValue(null));
 		}
 		}
@@ -109,15 +109,15 @@ public class ScoreboardToggleCommand implements CommandExecutor {
 				return true;
 			}
 			
-			if (plugin.getBoardhandler().hasScoreboard(target)) {
-				plugin.getBoardhandler().removeScoreboard(target);
+			if (plugin.getBoardHandler().hasScoreboard(target)) {
+				plugin.getBoardHandler().removeScoreboard(target);
 				plugin.sms(target, Lang.SCOREBOARD_TOGGLE_OFF_SELF.getConfigValue(null));
 				plugin.sms(sender, Lang.SCOREBOARD_TOGGLE_OFF_OTHERS.getConfigValue(new String[] {
 						target.getName()
 				}));
 			}
 			else {
-				plugin.getBoardhandler().createScoreboard(target);
+				plugin.getBoardHandler().createScoreboard(target);
 				plugin.sms(target, Lang.SCOREBOARD_TOGGLE_ON_SELF.getConfigValue(null));
 				plugin.sms(sender, Lang.SCOREBOARD_TOGGLE_OFF_OTHERS.getConfigValue(new String[] {
 						target.getName()

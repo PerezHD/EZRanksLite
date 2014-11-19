@@ -290,7 +290,7 @@ public class EZAdminConsole implements CommandExecutor {
 			if (plugin.useScoreboard()) {
 				plugin.startScoreboardTask();
 				for (Player pl : Bukkit.getServer().getOnlinePlayers()) {
-					plugin.getBoardhandler().createScoreboard(pl);
+					plugin.getBoardHandler().createScoreboard(pl);
 				}
 			} else {
 				plugin.stopScoreboardTask();
@@ -314,6 +314,7 @@ public class EZAdminConsole implements CommandExecutor {
 					continue;
 				}
 				EZRank ezrank = plugin.getRankHandler().getRankData(rank);
+				
 				if (ezrank.getRankups() == null || ezrank.getRankups().isEmpty()) {
 					continue;
 				}

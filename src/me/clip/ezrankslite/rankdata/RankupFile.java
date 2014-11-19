@@ -47,11 +47,7 @@ public class RankupFile {
 		if (this.dataFile == null) {
 			this.dataFile = new File(this.plugin.getDataFolder(), "rankups.yml");
 		}
-		if (this.dataFile.exists()) {
-			firstLoad = false;
-		} else {
-			firstLoad = true;
-		}
+        firstLoad = !this.dataFile.exists();
 
 		this.dataConfig = YamlConfiguration.loadConfiguration(this.dataFile);
 		return firstLoad;
@@ -92,7 +88,7 @@ public class RankupFile {
 		
 			this.dataConfig.set(rank + ".options.reset_cost", "0");
 		
-			this.dataConfig.set(rank + ".options.reset_commands", Arrays.asList(new String[] { "ezbroadcast %player% reset their rank to Guest!", "ezmsg You will need to start over!!", "pex user %player% group set Guest", "clearinventory %player%" }));
+			this.dataConfig.set(rank + ".options.reset_commands", Arrays.asList("ezbroadcast %player% reset their rank to Guest!", "ezmsg You will need to start over!!", "pex user %player% group set Guest", "clearinventory %player%"));
 		
 			save();
 	}
@@ -118,7 +114,7 @@ public class RankupFile {
 			this.dataConfig.set(rank + ".options.reset_cost", "0");
 		}
 		if (!this.dataConfig.contains(rank + ".options.reset_commands")) {
-			this.dataConfig.set(rank + ".options.reset_commands", Arrays.asList(new String[] { "ezbroadcast %player% reset their rank to Guest!", "ezmsg You will need to start over!!", "pex user %player% group set Guest", "clearinventory %player%" }));
+			this.dataConfig.set(rank + ".options.reset_commands", Arrays.asList("ezbroadcast %player% reset their rank to Guest!", "ezmsg You will need to start over!!", "pex user %player% group set Guest", "clearinventory %player%"));
 		}
 		this.dataConfig.set(prefix + "active", Boolean.valueOf(false));
 		this.dataConfig.set(prefix + "confirm_to_rankup", Boolean.valueOf(true));
@@ -126,10 +122,9 @@ public class RankupFile {
 		this.dataConfig.set(prefix + "cost", cost);
 
 		this.dataConfig.set(prefix + "requirement_message",
-				Arrays.asList(new String[] { "Your current rank is %rankfrom%", "You need $%cost% to rank up to %rankto%",
-						"Your balance is $%balance%"}));
+                Arrays.asList("Your current rank is %rankfrom%", "You need $%cost% to rank up to %rankto%", "Your balance is $%balance%"));
 		this.dataConfig.set(prefix + "rankup_commands",
-				Arrays.asList(new String[] { "ezbroadcast %player% ranked up to %rankto%!", "ezmsg &eCongrats on your rankup!", "ezmsg enjoy the fireworks!", "ezeffect fireworks", "spawn %player%", "pex user %player% group add %rankto%" , "pex user %player% group remove %rankfrom%"}));
+                Arrays.asList("ezbroadcast %player% ranked up to %rankto%!", "ezmsg &eCongrats on your rankup!", "ezmsg enjoy the fireworks!", "ezeffect fireworks", "spawn %player%", "pex user %player% group add %rankto%", "pex user %player% group remove %rankfrom%"));
 		save();
 	}
 	
@@ -197,23 +192,23 @@ public class RankupFile {
 	
 	public boolean checkValidRankOptions(String rank) {
 		boolean missingEntry = false;
-		if (containsEntry(rank + ".options.ranks_display_order") != true) {
+		if (!containsEntry(rank + ".options.ranks_display_order")) {
 			missingEntry = true;
 			dataConfig.set(rank + ".options.ranks_display_order", 1);
 		}
-		if (containsEntry(rank + ".options.rank_prefix") != true) {
+		if (!containsEntry(rank + ".options.rank_prefix")) {
 			missingEntry = true;
 			dataConfig.set(rank + ".options.rank_prefix", "&8[&c"+rank+"&8]");
 		}
-		if (containsEntry(rank + ".options.allow_reset") != true) {
+		if (!containsEntry(rank + ".options.allow_reset")) {
 			missingEntry = true;
 			dataConfig.set(rank + ".options.allow_reset", false);
 		}
-		if (containsEntry(rank + ".options.reset_cost") != true) {
+		if (!containsEntry(rank + ".options.reset_cost")) {
 			missingEntry = true;
 			dataConfig.set(rank + ".options.reset_cost", "0");
 		}
-		if (containsEntry(rank + ".options.reset_commands") != true) {
+		if (!containsEntry(rank + ".options.reset_commands")) {
 			missingEntry = true;
 			dataConfig.set(rank + ".options.reset_commands", "GroupNameHere");
 		}
@@ -225,32 +220,31 @@ public class RankupFile {
 		
 		boolean missingEntry = false;
 		
-		if (containsEntry(rank + "." + rankTo + ".active") != true) {
+		if (!containsEntry(rank + "." + rankTo + ".active")) {
 			missingEntry = true;
 			dataConfig.set(rank + "." + rankTo + ".active", false);
 		}
-		if (containsEntry(rank + "." + rankTo + ".confirm_to_rankup") != true) {
+		if (!containsEntry(rank + "." + rankTo + ".confirm_to_rankup")) {
 			missingEntry = true;
 			dataConfig.set(rank + "." + rankTo + ".confirm_to_rankup", true);
 		}
-		if (containsEntry(rank + "." + rankTo + ".rankup_prefix") != true) {
+		if (!containsEntry(rank + "." + rankTo + ".rankup_prefix")) {
 			missingEntry = true;
 			dataConfig.set(rank + "." + rankTo + ".rankup_prefix", "["+rankTo+"]");
 		}
-		if (containsEntry(rank + "." + rankTo + ".cost") != true) {
+		if (!containsEntry(rank + "." + rankTo + ".cost")) {
 			missingEntry = true;
 			dataConfig.set(rank + "." + rankTo + ".cost", "5000");
 		}
-		if (containsEntry(rank + "." + rankTo + ".requirement_message") != true) {
+		if (!containsEntry(rank + "." + rankTo + ".requirement_message")) {
 			missingEntry = true;
 			this.dataConfig.set(rank + "." + rankTo + ".requirement_message",
-					Arrays.asList(new String[] { "Your current rank is %rankfrom%", "You need $%cost% to rank up to %rankto%",
-							"Your balance is $%balance%"}));
+                    Arrays.asList("Your current rank is %rankfrom%", "You need $%cost% to rank up to %rankto%", "Your balance is $%balance%"));
 		}
-		if (containsEntry(rank + "." + rankTo + ".rankup_commands") != true) {
+		if (!containsEntry(rank + "." + rankTo + ".rankup_commands")) {
 			missingEntry = true;
 			dataConfig.set(rank + "." + rankTo + ".rankup_commands",
-					Arrays.asList(new String[] { "ezbroadcast [rankup] %player% ranked up to %rankto%!", "ezmsg Congrats on your rankup!", "ezmsg Here are some tools!", "kit tools %player%", "pex user %player% group add %rankto%", "pex user %player% group remove %rankfrom%" }));
+                    Arrays.asList("ezbroadcast [rankup] %player% ranked up to %rankto%!", "ezmsg Congrats on your rankup!", "ezmsg Here are some tools!", "kit tools %player%", "pex user %player% group add %rankto%", "pex user %player% group remove %rankfrom%"));
 		}		
 		return missingEntry;
 	}
@@ -322,7 +316,7 @@ public class RankupFile {
 					continue;
 				}
 
-				if (plugin.getHooks().isValidServerGroup(rankTo) == false) {
+				if (!plugin.getHooks().isValidServerGroup(rankTo)) {
 					plugin.getLogger()
 							.warning(rank
 									+ " has a rankup to rank "
@@ -361,9 +355,8 @@ public class RankupFile {
 			ranks++;
 		}
 
-		String msg = ranks + " Ranks loaded with " + rankups
-				+ " unique RankUps!";
-		return msg;
+        return ranks + " Ranks loaded with " + rankups
+                + " unique RankUps!";
 
 	}
 }

@@ -343,7 +343,7 @@ public class EZAdminCommand implements CommandExecutor {
 			if (plugin.useScoreboard()) {
 				plugin.startScoreboardTask();
 				for (Player pl : Bukkit.getServer().getOnlinePlayers()) {
-					plugin.getBoardhandler().createScoreboard(pl);
+					plugin.getBoardHandler().createScoreboard(pl);
 				}
 			} else {
 				plugin.stopScoreboardTask();

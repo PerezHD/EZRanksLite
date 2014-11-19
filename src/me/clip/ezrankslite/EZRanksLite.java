@@ -20,12 +20,14 @@
 package me.clip.ezrankslite;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import me.clip.ezrankslite.commands.EZAdminCommand;
 import me.clip.ezrankslite.commands.RanksCommand;
 import me.clip.ezrankslite.commands.RankupCommand;
 import me.clip.ezrankslite.commands.ScoreboardRefreshCommand;
+import me.clip.ezrankslite.commands.ScoreboardSwitchCommand;
 import me.clip.ezrankslite.commands.ScoreboardToggleCommand;
 import me.clip.ezrankslite.config.Config;
 import me.clip.ezrankslite.config.ConfigWrapper;
@@ -53,12 +55,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.earth2me.essentials.Essentials;
+
 public class EZRanksLite extends JavaPlugin {
 
 	private EffectsHandler effectsHandler = new EffectsHandler(this);
 	private PlayerRankupHandler playerhandler = new PlayerRankupHandler(this);
 	private RankHandler rankhandler = new RankHandler(this);
-	private ScoreboardHandler boardhandler = new ScoreboardHandler(this);
+	private ScoreboardHandler boardHandler = new ScoreboardHandler(this);
 	protected CostHandler multipliers = new CostHandler(this);
 	
 	private PlaceHolderHandler placeholders = new PlaceHolderHandler(this);
@@ -70,17 +74,18 @@ public class EZRanksLite extends JavaPlugin {
 	private EZAdminCommand admincommand = new EZAdminCommand(this);
 	private RankupCommand rankupcommand = new RankupCommand(this);
 	private RanksCommand rankscommand = new RanksCommand(this);
-	private ScoreboardToggleCommand togglecommand = new ScoreboardToggleCommand(
-			this);
-	private ScoreboardRefreshCommand refreshcommand = new ScoreboardRefreshCommand(
-			this);
-
+	private ScoreboardToggleCommand togglecommand = new ScoreboardToggleCommand(this);
+	private ScoreboardRefreshCommand refreshcommand = new ScoreboardRefreshCommand(this);
+	private ScoreboardSwitchCommand switchcommand = new ScoreboardSwitchCommand(this);
+	
+	
 	private Config config = new Config(this);
 	private RankupFile rankupfile = new RankupFile(this);
 	private MultiplierFile multiplierfile = new MultiplierFile(this);
-	private ConfigWrapper messagesFile = new ConfigWrapper(this, "",
-			"messages.yml");
+	private ConfigWrapper messagesFile = new ConfigWrapper(this, "", "messages.yml");
 
+	
+	//move to options object
 	private static boolean debug;
 	private static String servername;
 	private static boolean fixThousands;
@@ -97,6 +102,9 @@ public class EZRanksLite extends JavaPlugin {
 	private static boolean useRanks;
 	private static boolean useRankupCooldown;
 	private static int rankupCooldownTime;
+	
+	public static List<String> staffOnline;
+	//
 
 	// scoreboard options
 	private static boolean useScoreboard;
@@ -115,9 +123,11 @@ public class EZRanksLite extends JavaPlugin {
 	
 	private static boolean checkUpdates;
 	
+	private static Essentials ess = null;
 	
 	@Override
 	public void onEnable() {
+
 		
 		if (!vaulteco.setupEconomy()) {
 			debug(true,
@@ -125,22 +135,22 @@ public class EZRanksLite extends JavaPlugin {
 			Bukkit.getServer().getPluginManager().disablePlugin(this);
 		}
 		
-		if (Bukkit.getServer().getPluginManager().getPlugin("SQLPerms") != null
-				&& Bukkit.getServer().getPluginManager().getPlugin("SQLPerms")
-						.isEnabled()) {
-			debug(true,
-					"SQLPerms was detected and will be used instead of Vault for permissions!");
+		if (Bukkit.getServer().getPluginManager().isPluginEnabled("SQLPerms")) {
+			debug(true, "SQLPerms was detected and will be used instead of Vault for permissions!");
 			useSQLPerms = true;
 		} else if (!vaultperms.setupVault()) {
-			debug(true,
-					"Could not detect Vault for permissions Hooking! Disabling EZRanksLite!");
+			debug(true, "Could not detect Vault for permissions Hooking! Disabling EZRanksLite!");
 			Bukkit.getServer().getPluginManager().disablePlugin(this);
 		} 
 		
-		if (Bukkit.getServer().getPluginManager().getPlugin("VoteParty") != null
-				&& Bukkit.getServer().getPluginManager().getPlugin("VoteParty")
-						.isEnabled()) {
+		if (Bukkit.getServer().getPluginManager().isPluginEnabled("VoteParty")) {
+			debug(true, "EZRanksLite hooked into VoteParty!!");
 			useVoteParty = true;
+		}
+		
+		if (Bukkit.getServer().getPluginManager().isPluginEnabled("Essentials")) {
+			debug(true, "EZRanksLite hooked into Essentials!!");
+			ess = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
 		}
 		
 		init();
@@ -175,6 +185,8 @@ public class EZRanksLite extends JavaPlugin {
 		
 		checkUpdates = config.checkUpdates();
 		
+		staffOnline = new ArrayList<String>();
+		
 		if (checkUpdates) {
 			spigotUpdater = new Updater(this);
 			if (spigotUpdater.checkUpdate()) {
@@ -190,8 +202,10 @@ public class EZRanksLite extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		stopScoreboardTask();
+		Bukkit.getScheduler().cancelTasks(this);
 		instance = null;
 		sbOptions = null;
+		ScoreboardHandler.staffToggled = null;
 	}
 
 	private void registerCmds() {
@@ -200,6 +214,7 @@ public class EZRanksLite extends JavaPlugin {
 		getCommand("ranks").setExecutor(rankscommand);
 		getCommand("sbtoggle").setExecutor(togglecommand);
 		getCommand("sbrefresh").setExecutor(refreshcommand);
+		getCommand("sbswitch").setExecutor(switchcommand);
 		debug(false, "Commands registered");
 	}
 
@@ -269,7 +284,14 @@ public class EZRanksLite extends JavaPlugin {
 		options.setNoRankups(config.noRankups());
 		options.setpBarColor(config.getProgressBarColor());
 		options.setpBarEndColor(config.getProgressBarEndColor());
+		options.setpBarNeedsColor(config.getSbProgressBarNeedsColor());
 		options.setDisabledWorlds(config.sbDisabledWorlds());
+		options.setUseStaffScoreboard(config.useStaffSb());
+		options.setStaffTitle(config.getStaffSbTitle());
+		options.setStaffText(config.getStaffSbText());
+		options.setpBarLeftChar(config.getSbProgressLeftChar());
+		options.setpBarRightChar(config.getSbProgressRightChar());
+		options.setpBarChar(config.getSbProgressBarChar());
 		sbOptions = options;
 		debug(false, "Scoreboard options loaded!");
 		return options;
@@ -300,8 +322,8 @@ public class EZRanksLite extends JavaPlugin {
 		return effectsHandler;
 	}
 
-	public ScoreboardHandler getBoardhandler() {
-		return boardhandler;
+	public ScoreboardHandler getBoardHandler() {
+		return boardHandler;
 	}
 
 	public Config getConfigFile() {
@@ -520,6 +542,10 @@ public class EZRanksLite extends JavaPlugin {
 
 	public static EZRanksLite i() {
 		return instance;
+	}
+	
+	public Essentials getEssentials() {
+		return ess;
 	}
 	
 	

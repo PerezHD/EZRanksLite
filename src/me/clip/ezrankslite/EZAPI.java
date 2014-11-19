@@ -21,6 +21,7 @@ package me.clip.ezrankslite;
 
 import java.util.Collection;
 
+import me.clip.ezrankslite.multipliers.CostHandler;
 import me.clip.ezrankslite.rankdata.EZRank;
 import me.clip.ezrankslite.rankdata.EZRankup;
 
@@ -49,6 +50,40 @@ public class EZAPI {
 	
 	public String[] getServerGroups() {
 		return plugin.getHooks().getServerGroups();
+	}
+	
+	/**
+	 * get a players rankup progress
+	 * @param p Player to get rankup progress for
+	 * @return progress based on money needed to rankup
+	 */
+	public int getRankupProgress(Player p) {
+		
+		if (getRankups(p) == null || getRankups(p).isEmpty()) {
+			return 0;
+		}
+		
+		double cost = 0;
+		
+		while (getRankups(p).iterator().hasNext()) {
+			cost = Double.parseDouble(getRankups(p).iterator().next().getCost());
+		}
+		
+		cost = CostHandler.getMultiplier(p, cost);
+		
+		cost = CostHandler.getDiscount(p, cost);
+		
+		return plugin.getBoardHandler().getProgress(getEconBalance(p), String.valueOf(cost));
+
+	}
+	
+	/**
+	 * get a players rankup progress bar
+	 * @param p Player to get rankup progress bar for
+	 * @return progress bar based on money needed to rankup
+	 */
+	public String getRankupProgressBar(Player p) {
+		return plugin.getBoardHandler().getProgressBar(getRankupProgress(p));
 	}
 	
 	/**
@@ -104,7 +139,7 @@ public class EZAPI {
 	 * @param p player to update the EZRanksLite scoreboard for
 	 */
 	public void updateScoreboard(Player p) {
-		plugin.getBoardhandler().updateScoreboard(p);
+		plugin.getBoardHandler().updateScoreboard(p);
 	}
 
 	/**
@@ -127,7 +162,7 @@ public class EZAPI {
 	 */
 	public Collection<EZRankup> getRankups(Player p) {
 		String rank = getCurrentRank(p);
-		if (plugin.getRankHandler().getRankData(rank) != null 
+		if (plugin.getRankHandler().getRankData(rank) != null
 				&& plugin.getRankHandler().getRankData(rank).hasRankups()) {
 			return plugin.getRankHandler().getRankData(rank).getRankups();
 		}
@@ -146,10 +181,7 @@ public class EZAPI {
 	 */
 	public EZRank getRankData(Player p) {
 		String rank = getCurrentRank(p);
-		if (plugin.getRankHandler().getRankData(rank) != null) {
-			
-			return plugin.getRankHandler().getRankData(rank);	
-		}
+		if (plugin.getRankHandler().getRankData(rank) != null) return plugin.getRankHandler().getRankData(rank);
 		return null;
 	}
 	
@@ -164,9 +196,8 @@ public class EZAPI {
 	 * will return null if the permissionsGroup was not loaded/created from the rankups.yml
 	 */
 	public EZRank getRankData(String permissionsGroup) {
-		if (plugin.getRankHandler().getRankData(permissionsGroup) != null) {
-			return plugin.getRankHandler().getRankData(permissionsGroup);	
-		}
+		if (plugin.getRankHandler().getRankData(permissionsGroup) != null)
+            return plugin.getRankHandler().getRankData(permissionsGroup);
 		return null;
 	}
 	

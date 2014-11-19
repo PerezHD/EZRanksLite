@@ -70,13 +70,13 @@ public class ScoreboardRefreshCommand implements CommandExecutor {
 					return true;
 				}
 
-				if (plugin.getBoardhandler().hasScoreboard(target)) {
-					plugin.getBoardhandler().updateScoreboard(target);
+				if (plugin.getBoardHandler().hasScoreboard(target)) {
+					plugin.getBoardHandler().updateScoreboard(target);
 					plugin.sms(sender, Lang.SCOREBOARD_REFRESHED_OTHERS.getConfigValue(new String[] {
 							target.getName()
 					}));
 				} else {
-					plugin.getBoardhandler().createScoreboard(target);
+					plugin.getBoardHandler().createScoreboard(target);
 					plugin.sms(sender, Lang.SCOREBOARD_TOGGLE_ON_OTHERS.getConfigValue(new String[] {
 							target.getName()
 					}));
@@ -102,11 +102,11 @@ public class ScoreboardRefreshCommand implements CommandExecutor {
 				return true;
 			}
 			
-			if (plugin.getBoardhandler().hasScoreboard(p)) {
-				plugin.getBoardhandler().updateScoreboard(p);
+			if (plugin.getBoardHandler().hasScoreboard(p)) {
+				plugin.getBoardHandler().updateScoreboard(p);
 				plugin.sms(sender, Lang.SCOREBOARD_REFRESHED_SELF.getConfigValue(null));
 			} else {
-				plugin.getBoardhandler().createScoreboard(p);
+				plugin.getBoardHandler().createScoreboard(p);
 				plugin.sms(sender, Lang.SCOREBOARD_TOGGLE_ON_SELF.getConfigValue(null));
 			}
 			return true;
@@ -136,14 +136,14 @@ public class ScoreboardRefreshCommand implements CommandExecutor {
 				return true;
 			}
 
-			if (plugin.getBoardhandler().hasScoreboard(target)) {
-				plugin.getBoardhandler().updateScoreboard(target);
+			if (plugin.getBoardHandler().hasScoreboard(target)) {
+				plugin.getBoardHandler().updateScoreboard(target);
 				plugin.sms(target, Lang.SCOREBOARD_REFRESHED_SELF.getConfigValue(null));
 				plugin.sms(p, Lang.SCOREBOARD_REFRESHED_OTHERS.getConfigValue(new String[] {
 						target.getName()
 				}));
 			} else {
-				plugin.getBoardhandler().createScoreboard(target);
+				plugin.getBoardHandler().createScoreboard(target);
 				plugin.sms(target, Lang.SCOREBOARD_TOGGLE_ON_SELF.getConfigValue(null));
 				plugin.sms(p, Lang.SCOREBOARD_TOGGLE_ON_OTHERS.getConfigValue(new String[] {
 						target.getName()

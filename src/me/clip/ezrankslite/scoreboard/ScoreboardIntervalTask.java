@@ -34,7 +34,7 @@ public class ScoreboardIntervalTask implements Runnable {
 	@Override
 	public void run() {
 		
-		final Set<String> players = plugin.getBoardhandler().boards.keySet();
+		Set<String> players = plugin.getBoardHandler().boards.keySet();
 		
 		for (String player : players) {
 			
@@ -42,5 +42,7 @@ public class ScoreboardIntervalTask implements Runnable {
 					new SoreboardRefreshTask(plugin, player));
 	
 		}
+		
+		players = null;
 	}
 }

@@ -1,6 +1,6 @@
 name: EZRanksLite
 main: me.clip.ezrankslite.EZRanksLite
-version: 1.5.4.2
+version: 1.5.4.5
 author: extended_clip
 depend: [Vault]
 softdepend: [PermissionsEx, VoteParty, SQLPerms]
@@ -21,6 +21,9 @@ commands:
    sbrefresh:
      description: force refresh the scoreboard if it is enabled
      aliases: [scoreboardrefresh, ezrefresh, sbupdate]
+   sbswitch:
+     description: switch scoreboard from staff to player
+     aliases: [sbstaff, sbstaffswitch]
 permissions:
     ezranks.admin:
         description: Allows access to /rankup admin
@@ -48,4 +51,7 @@ permissions:
         default: op
     ezranks.admin.scoreboard:
         description: Ability to toggle and update others scoreboard by command
+        default: op
+    ezranks.staff:
+        description: Ability to switch to staff scoreboard
         default: op

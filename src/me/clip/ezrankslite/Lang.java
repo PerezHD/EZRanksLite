@@ -152,6 +152,18 @@ public enum Lang {
 	 */
 	SCOREBOARD_REFRESHED_OTHERS("ezscoreboard_refreshed_others", "&f{0}s &ascoreboard has been refreshed!"),
 	/**
+	 * scoreboard refreshed
+	 */
+	STAFF_SCOREBOARD_DISABLED("staff_scoreboard_disabled", "&cThe staff scoreboard is disabled!"),
+	/**
+	 * scoreboard refreshed
+	 */
+	STAFF_SCOREBOARD_TOGGLE_ON("staff_scoreboard_toggle_on", "&aYour scoreboard has been switched to (Staff)"),
+	/**
+	 * scoreboard refreshed
+	 */
+	STAFF_SCOREBOARD_TOGGLE_OFF("staff_scoreboard_toggle_off", "&aYour scoreboard has been switched to (Player)"),
+	/**
 	 * player not online
 	 */
 	PLAYER_NOT_ONLINE("player_not_online", "&f{0} &cis not online!"),

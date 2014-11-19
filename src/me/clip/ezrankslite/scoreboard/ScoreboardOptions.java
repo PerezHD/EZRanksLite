@@ -26,26 +26,39 @@ public class ScoreboardOptions {
 	public ScoreboardOptions() {
 	}
 	
-	private static String title;
+	private String title;
 
-	private static List<String> text;
+	private List<String> text;
 	
-	private static String noRankups;
+	private String noRankups;
 	
-	private static String rankup;
+	private String rankup;
 	
-	private static String pBarColor;
+	private String pBarColor;
+	private String pBarNeedsColor;
 	
-	private static String pBarEndColor;
+	private String pBarEndColor;
 	
-	private static List<String> disabledWorlds;
+	private String pBarLeftChar;
+	
+	private String pBarChar;
+	
+	private String pBarRightChar;
+	
+	private List<String> disabledWorlds;
+	
+	private boolean useStaffScoreboard;
+	
+	private List<String> staffText;
+	
+	private String staffTitle;
 
 	public String getTitle() {
 		return title;
 	}
 
 	public void setTitle(String title) {
-		ScoreboardOptions.title = title;
+		this.title = title;
 	}
 	
 	public List<String> getText() {
@@ -53,7 +66,7 @@ public class ScoreboardOptions {
 	}
 
 	public void setText(List<String> text) {
-		ScoreboardOptions.text = text;
+		this.text = text;
 	}
 
 	public String getNoRankups() {
@@ -61,7 +74,7 @@ public class ScoreboardOptions {
 	}
 
 	public void setNoRankups(String noRankups) {
-		ScoreboardOptions.noRankups = noRankups;
+		this.noRankups = noRankups;
 	}
 
 	public String getRankup() {
@@ -69,7 +82,7 @@ public class ScoreboardOptions {
 	}
 
 	public void setRankup(String rankup) {
-		ScoreboardOptions.rankup = rankup;
+		this.rankup = rankup;
 	}
 
 	public String getpBarColor() {
@@ -77,7 +90,7 @@ public class ScoreboardOptions {
 	}
 
 	public void setpBarColor(String pBarColor) {
-		ScoreboardOptions.pBarColor = pBarColor;
+		this.pBarColor = pBarColor;
 	}
 
 	public String getpBarEndColor() {
@@ -85,7 +98,7 @@ public class ScoreboardOptions {
 	}
 
 	public void setpBarEndColor(String pBarEndColor) {
-		ScoreboardOptions.pBarEndColor = pBarEndColor;
+		this.pBarEndColor = pBarEndColor;
 	}
 
 	public List<String> getDisabledWorlds() {
@@ -93,7 +106,63 @@ public class ScoreboardOptions {
 	}
 
 	public void setDisabledWorlds(List<String> disabledWorlds) {
-		ScoreboardOptions.disabledWorlds = disabledWorlds;
+		this.disabledWorlds = disabledWorlds;
+	}
+
+	public boolean useStaffScoreboard() {
+		return useStaffScoreboard;
+	}
+
+	public void setUseStaffScoreboard(boolean useStaffScoreboard) {
+		this.useStaffScoreboard = useStaffScoreboard;
+	}
+
+	public List<String> getStaffText() {
+		return staffText;
+	}
+
+	public void setStaffText(List<String> staffText) {
+		this.staffText = staffText;
+	}
+	
+	public String getStaffTitle() {
+		return staffTitle;
+	}
+
+	public void setStaffTitle(String staffTitle) {
+		this.staffTitle = staffTitle;
+	}
+
+	public String getpBarLeftChar() {
+		return pBarLeftChar;
+	}
+
+	public void setpBarLeftChar(String pBarLeftChar) {
+		this.pBarLeftChar = pBarLeftChar;
+	}
+
+	public String getpBarChar() {
+		return pBarChar;
+	}
+
+	public void setpBarChar(String pBarChar) {
+		this.pBarChar = pBarChar;
+	}
+
+	public String getpBarRightChar() {
+		return pBarRightChar;
+	}
+
+	public void setpBarRightChar(String pBarRightChar) {
+		this.pBarRightChar = pBarRightChar;
+	}
+
+	public String getpBarNeedsColor() {
+		return pBarNeedsColor;
+	}
+
+	public void setpBarNeedsColor(String pBarNeedsColor) {
+		this.pBarNeedsColor = pBarNeedsColor;
 	}
 
 }
