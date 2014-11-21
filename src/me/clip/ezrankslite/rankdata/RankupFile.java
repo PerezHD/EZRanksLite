@@ -254,6 +254,8 @@ public class RankupFile {
 		int ranks = 0;
 		int rankups = 0;
 
+		//the loadMap method will initialize the rankHandler
+		//which holds all data related to rank names (perm groups)
 		plugin.getRankHandler().loadMap();
 		
 		if (getRanks() == null || getRanks().isEmpty()) {
@@ -292,7 +294,7 @@ public class RankupFile {
 			}
 			
 			
-			
+			//a perm group is named this
 			EZRank baserank = new EZRank(rank);
 			
 			if (checkValidRankOptions(rank)) {

@@ -63,16 +63,20 @@ public class RankupCommand implements CommandExecutor {
 
 		Player p = (Player) sender;
 
+		//get players group so we know what to do
 		String rank = plugin.getHooks().getGroup(p);
 
+		//check if the rank the player is in has data loaded from rankups.yml
 		if (!plugin.getRankHandler().hasRankData(rank)) {
 			plugin.sms(p, Lang.RANKUP_NO_RANKUPS_AVAILABLE
 					.getConfigValue(new String[] { rank }));
 			return true;
 		}
 
+		//baserank object, holds rankup objects and options
 		EZRank ezrank = plugin.getRankHandler().getRankData(rank);
 
+		//if the ezrank is null
 		if (ezrank == null) {
 			plugin.sms(p, Lang.RANKUP_NO_RANKUPS_AVAILABLE
 					.getConfigValue(new String[] { rank }));
@@ -91,6 +95,8 @@ public class RankupCommand implements CommandExecutor {
 					}
 				}
 			}
+			
+			//ezrank can tell us a lot of things
 			
 			if (ezrank.isLastRank()) {
 				plugin.sms(p, Lang.RANKUP_LAST_RANK
@@ -408,25 +414,17 @@ public class RankupCommand implements CommandExecutor {
 					plugin.sms(
 							p,
 							msg.replace("%rankfrom%", ezrank.getRank())
-									.replace("%rankto%", rankup.getRank())
-									.replace("%rankprefix%", ezrank.getPrefix())
-									.replace("%rankupprefix%",
-											rankup.getPrefix())
-									.replace("%player%", p.getName())
-									.replace("%progress%", plugin.getBoardHandler().getProgress(balance, String.valueOf(needed))+"")
-									.replace("%progressbar%", plugin.getBoardHandler().getProgressBar(plugin.getBoardHandler().getProgress(balance, String.valueOf(needed))))
-									.replace("%difference%", EZRanksLite.getDifference(balance, needed))
-									.replace(
-											"%costdifference%",
-											EZRanksLite.getDifference(balance,
-													needed))
-									.replace("%world%", p.getWorld().getName())
-									.replace(
-											"%balance%",
-											EZRanksLite.fixMoney(balance))
-									.replace(
-											"%cost%",
-											EZRanksLite.fixMoney(needed)));
+								.replace("%rankto%", rankup.getRank())
+								.replace("%rankprefix%", ezrank.getPrefix())
+								.replace("%rankupprefix%", rankup.getPrefix())
+								.replace("%player%", p.getName())
+								.replace("%progress%", plugin.getBoardHandler().getProgress(balance, String.valueOf(needed))+"")
+								.replace("%progressbar%", plugin.getBoardHandler().getProgressBar(plugin.getBoardHandler().getProgress(balance, String.valueOf(needed))))
+								.replace("%difference%", EZRanksLite.getDifference(balance, needed))
+								.replace("%costdifference%", EZRanksLite.getDifference(balance, needed))
+								.replace("%world%", p.getWorld().getName())
+								.replace("%balance%", EZRanksLite.fixMoney(balance))
+								.replace("%cost%", EZRanksLite.fixMoney(needed)));
 				}
 				return true;
 			}

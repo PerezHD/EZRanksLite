@@ -33,7 +33,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+
 
 public class ScoreboardHandler {
 
@@ -163,7 +163,6 @@ public class ScoreboardHandler {
 		
 		int playersOnline = Bukkit.getServer().getOnlinePlayers().length-staffOnline;
 		
-		String ping = String.valueOf(((CraftPlayer) p).getHandle().ping);
 		
 		String op = String.valueOf(p.isOp());
 		
@@ -208,7 +207,6 @@ public class ScoreboardHandler {
 				.replace("%onlinemax%", max)
 				.replace("%onlinestaff%", String.valueOf(staffOnline))
 				.replace("%onlineplayers%", String.valueOf(playersOnline))
-				.replace("%ping%", ping)
 				.replace("%tps%", tps)
 				.replace("%op%", op)
 				.replace("%gamemode%", gm)
@@ -240,7 +238,6 @@ public class ScoreboardHandler {
 						.replace("%onlinemax%", max)
 						.replace("%onlinestaff%", String.valueOf(staffOnline))
 						.replace("%onlineplayers%", String.valueOf(playersOnline))
-						.replace("%ping%", ping)
 						.replace("%tps%", tps)
 						.replace("%op%", op)
 						.replace("%gamemode%", gm)
@@ -341,6 +338,7 @@ public class ScoreboardHandler {
 				pro = getProgress(plugin.getEco().getBalance(pl), String.valueOf(needed));
 				rankupPrefix = r.getPrefix();
 				difference = EZRanksLite.getDifference(plugin.getEco().getBalance(pl), needed);
+				
 				if (pro == 100) {
 					progress = pro + "%";
 					progressBar = plugin.getSbOptions().getRankup();
@@ -360,11 +358,9 @@ public class ScoreboardHandler {
 		
 		int playersOnline = Bukkit.getServer().getOnlinePlayers().length-staffOnline;
 		
-		String ping = String.valueOf(((CraftPlayer) p).getHandle().ping);
-		
 		String world = String.valueOf(p.getWorld().getName());
 		
-		String tps = "20"; //lol
+		String tps = "20";
 		
 		if (plugin.getEssentials() != null) {
 			
@@ -384,7 +380,6 @@ public class ScoreboardHandler {
 				.replace("%onlinemax%", max)
 				.replace("%onlinestaff%", String.valueOf(staffOnline))
 				.replace("%onlineplayers%", String.valueOf(playersOnline))
-				.replace("%ping%", ping)
 				.replace("%tps%", tps)
 				.replace("%world%", world)
 				.replace("%rankfrom%", rank)
@@ -424,7 +419,6 @@ public class ScoreboardHandler {
 						.replace("%onlinemax%", max)
 						.replace("%onlinestaff%", String.valueOf(staffOnline))
 						.replace("%onlineplayers%", String.valueOf(playersOnline))
-						.replace("%ping%", ping)
 						.replace("%tps%", tps)
 						.replace("%world%", world)
 						.replace("%rankfrom%", rank)

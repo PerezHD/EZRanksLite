@@ -20,6 +20,7 @@
 package me.clip.ezrankslite;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import me.clip.ezrankslite.multipliers.CostHandler;
 import me.clip.ezrankslite.rankdata.EZRank;
@@ -35,19 +36,38 @@ public class EZAPI {
 		plugin = instance;
 	}
 	
+	/**
+	 * get a players economy balance formatted by EZRanksLite
+	 * @param p Player object to get balance for
+	 * @return economy balance formatted to options set in EZRanksLite config
+	 */
 	public String getFormattedBalance(Player p) {
 		double bal = getEconBalance(p);
 		return EZRanksLite.fixMoney(bal);
 	}
 	
+	/**
+	 * get a players raw economy balance from Vault
+	 * @param p Player to get balance for
+	 * @return player economy balance from Vault
+	 */
 	public double getEconBalance(Player p) {
 		return plugin.getEco().getBalance(p);
 	}
 	
+	/**
+	 * get all permission groups attached to a player
+	 * @param p Player to get groups for
+	 * @return All permission groups a player is in
+	 */
 	public String[] getPermissionsGroups(Player p) {
 		return plugin.getHooks().getGroups(p);
 	}
 	
+	/**
+	 * get all server groups loaded by the permissions plugin through Vault
+	 * @return list of groups that permissions plugin has loaded
+	 */
 	public String[] getServerGroups() {
 		return plugin.getHooks().getServerGroups();
 	}
@@ -55,18 +75,31 @@ public class EZAPI {
 	/**
 	 * get a players rankup progress
 	 * @param p Player to get rankup progress for
-	 * @return progress based on amount of money needed to rankup
+	 * @return progress percentage completed based on amount of money needed to rankup
 	 */
 	public int getRankupProgress(Player p) {
 		
+		
 		if (getRankups(p) == null || getRankups(p).isEmpty()) {
-			return 0;
+			return 100;
 		}
 		
 		double cost = 0;
 		
-		while (getRankups(p).iterator().hasNext()) {
-			cost = Double.parseDouble(getRankups(p).iterator().next().getCost());
+		Iterator<EZRankup> iterator = getRankups(p).iterator();
+		
+		while (iterator.hasNext()) {
+			String c = iterator.next().getCost();
+			if (c != null) {
+				try {
+					cost = Double.parseDouble(c);
+				} catch (Exception e) {
+					cost = 0;
+				}
+			}
+			else {
+				cost = 0;
+			}
 		}
 		
 		cost = CostHandler.getMultiplier(p, cost);
@@ -74,7 +107,15 @@ public class EZAPI {
 		cost = CostHandler.getDiscount(p, cost);
 		
 		return plugin.getBoardHandler().getProgress(getEconBalance(p), String.valueOf(cost));
-
+	}
+	
+	/**
+	 * get the percentage complete comparing balance to a cost
+	 * @param p Player to get rankup progress for
+	 * @return progress percentage completed based on amount of money needed to rankup
+	 */
+	public int getProgress(double balance, double cost) {
+		return plugin.getBoardHandler().getProgress(balance, String.valueOf(cost));
 	}
 	
 	/**
@@ -84,6 +125,15 @@ public class EZAPI {
 	 */
 	public String getRankupProgressBar(Player p) {
 		return plugin.getBoardHandler().getProgressBar(getRankupProgress(p));
+	}
+	
+	/**
+	 * get a progress bar for a certain percentage completed
+	 * @param progress int percentage completed
+	 * @return progress bar based on progress completed
+	 */
+	public String getProgressBar(int progress) {
+		return plugin.getBoardHandler().getProgressBar(progress);
 	}
 	
 	/**

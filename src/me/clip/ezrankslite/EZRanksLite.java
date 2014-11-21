@@ -58,18 +58,20 @@ import org.bukkit.scheduler.BukkitTask;
 import com.earth2me.essentials.Essentials;
 
 public class EZRanksLite extends JavaPlugin {
+	
+	private static EZRanksLite instance;
+	
+	private Config config = new Config(this);
+	private RankupFile rankupfile = new RankupFile(this);
+	private MultiplierFile multiplierfile = new MultiplierFile(this);
+	private ConfigWrapper messagesFile = new ConfigWrapper(this, "", "messages.yml");
 
 	private EffectsHandler effectsHandler = new EffectsHandler(this);
 	private PlayerRankupHandler playerhandler = new PlayerRankupHandler(this);
 	private RankHandler rankhandler = new RankHandler(this);
 	private ScoreboardHandler boardHandler = new ScoreboardHandler(this);
 	protected CostHandler multipliers = new CostHandler(this);
-	
 	private PlaceHolderHandler placeholders = new PlaceHolderHandler(this);
-
-	private VaultPerms vaultperms = new VaultPerms(this);
-	private VaultEco vaulteco = new VaultEco(this);
-	private Hooks hooks = new Hooks(this);
 
 	private EZAdminCommand admincommand = new EZAdminCommand(this);
 	private RankupCommand rankupcommand = new RankupCommand(this);
@@ -78,12 +80,15 @@ public class EZRanksLite extends JavaPlugin {
 	private ScoreboardRefreshCommand refreshcommand = new ScoreboardRefreshCommand(this);
 	private ScoreboardSwitchCommand switchcommand = new ScoreboardSwitchCommand(this);
 	
-	
-	private Config config = new Config(this);
-	private RankupFile rankupfile = new RankupFile(this);
-	private MultiplierFile multiplierfile = new MultiplierFile(this);
-	private ConfigWrapper messagesFile = new ConfigWrapper(this, "", "messages.yml");
+	private VaultPerms vaultperms = new VaultPerms(this);
+	private VaultEco vaulteco = new VaultEco(this);
+	private Hooks hooks = new Hooks(this);
 
+	public static boolean useVoteParty = false;
+	
+	private static boolean useSQLPerms;
+	
+	private static Essentials ess = null;
 	
 	//move to options object
 	private static boolean debug;
@@ -102,53 +107,46 @@ public class EZRanksLite extends JavaPlugin {
 	private static boolean useRanks;
 	private static boolean useRankupCooldown;
 	private static int rankupCooldownTime;
-	
-	public static List<String> staffOnline;
 	//
+	public static List<String> staffOnline;
 
-	// scoreboard options
+	private static ScoreboardOptions sbOptions = null;
 	private static boolean useScoreboard;
 	private static int sbRefresh;
-	private static ScoreboardOptions sbOptions = null;
-
+	
 	private static BukkitTask sbTask = null;
 
-	public static boolean useVoteParty = false;
-	
-	private static EZRanksLite instance;
-	
-	private static boolean useSQLPerms;
-	
+	private static boolean checkUpdates;
 	private Updater spigotUpdater = null;
 	
-	private static boolean checkUpdates;
-	
-	private static Essentials ess = null;
 	
 	@Override
 	public void onEnable() {
 
-		
 		if (!vaulteco.setupEconomy()) {
-			debug(true,
-					"Could not hook into an Economy plugin through Vault! Disabling EZRanksLite!");
+			debug(true, "Could not hook into an Economy plugin through Vault! Disabling EZRanksLite!");
 			Bukkit.getServer().getPluginManager().disablePlugin(this);
 		}
 		
 		if (Bukkit.getServer().getPluginManager().isPluginEnabled("SQLPerms")) {
+			
 			debug(true, "SQLPerms was detected and will be used instead of Vault for permissions!");
 			useSQLPerms = true;
+			
 		} else if (!vaultperms.setupVault()) {
+			
 			debug(true, "Could not detect Vault for permissions Hooking! Disabling EZRanksLite!");
 			Bukkit.getServer().getPluginManager().disablePlugin(this);
 		} 
 		
 		if (Bukkit.getServer().getPluginManager().isPluginEnabled("VoteParty")) {
+			
 			debug(true, "EZRanksLite hooked into VoteParty!!");
 			useVoteParty = true;
 		}
 		
 		if (Bukkit.getServer().getPluginManager().isPluginEnabled("Essentials")) {
+			
 			debug(true, "EZRanksLite hooked into Essentials!!");
 			ess = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
 		}
@@ -196,16 +194,17 @@ public class EZRanksLite extends JavaPlugin {
 				getLogger().info("You are running the latest version of EZRanksLite!");
 			}
 		}
-
 	}
 
 	@Override
 	public void onDisable() {
 		stopScoreboardTask();
 		Bukkit.getScheduler().cancelTasks(this);
-		instance = null;
+		
 		sbOptions = null;
+		staffOnline = null;
 		ScoreboardHandler.staffToggled = null;
+		instance = null;
 	}
 
 	private void registerCmds() {
@@ -298,8 +297,7 @@ public class EZRanksLite extends JavaPlugin {
 	}
 
 	private void registerListeners() {
-		Bukkit.getServer().getPluginManager()
-				.registerEvents(new PlayerListener(this), this);
+		Bukkit.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 	}
 
 	public VaultPerms getVault() {
@@ -323,6 +321,11 @@ public class EZRanksLite extends JavaPlugin {
 	}
 
 	public ScoreboardHandler getBoardHandler() {
+		return boardHandler;
+	}
+	
+	@Deprecated
+	public ScoreboardHandler getBoardhandler() {
 		return boardHandler;
 	}
 
@@ -367,8 +370,7 @@ public class EZRanksLite extends JavaPlugin {
 			if (sbTask == null) {
 				sbTask = getServer().getScheduler().runTaskTimerAsynchronously(this,
 						new ScoreboardIntervalTask(this), 0L, (20L * sbRefresh));
-				debug(false,
-						"Scoreboard refresh task has started and will refresh every "
+				debug(false, "Scoreboard refresh task has started and will refresh every "
 								+ sbRefresh + " seconds.");
 			} else {
 				sbTask.cancel();
@@ -520,10 +522,6 @@ public class EZRanksLite extends JavaPlugin {
 		return rankupCooldownTime;
 	}
 
-	public static EZAPI getAPI() {
-		return new EZAPI(instance);
-	}
-
 	public boolean useSQLPerms() {
 		return useSQLPerms;
 	}
@@ -544,9 +542,15 @@ public class EZRanksLite extends JavaPlugin {
 		return instance;
 	}
 	
+	public static EZRanksLite getInstance() {
+		return instance;
+	}
+	
+	public static EZAPI getAPI() {
+		return new EZAPI(instance);
+	}
+	
 	public Essentials getEssentials() {
 		return ess;
 	}
-	
-	
 }
