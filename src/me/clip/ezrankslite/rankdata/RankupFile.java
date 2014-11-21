@@ -249,29 +249,25 @@ public class RankupFile {
 		return missingEntry;
 	}
 
+	/**
+	 * load all rankups from file into the RankHandler
+	 * @return rankups loaded message
+	 */
 	public String loadRankupsFromFile() {
 
 		int ranks = 0;
 		int rankups = 0;
 
-		//the loadMap method will initialize the rankHandler
-		//which holds all data related to rank names (perm groups)
 		plugin.getRankHandler().loadMap();
 		
 		if (getRanks() == null || getRanks().isEmpty()) {
 			plugin.getLogger().warning("You have not created any rankups yet!");
-			plugin.getLogger()
-					.info("Create your first rankup with /ezadmin createrankup <rankfrom> <rankto> <cost>");
-			plugin.getLogger()
-			.info("Modify the configuration section in the rankups.yml for the rankup you just created, then use /ezadmin reload to update your changes");
-			plugin.getLogger()
-			.info("You need to include the command(s) to rank the player up in rankup_commands - pex user %player% group set %rankto%, manuadd %player% %rankto% %world%");
-			plugin.getLogger()
-			.info("You can also use ezcommands in the rankup_commands section \n(ezmsg <message>) will send a raw message to the player ranking up \n(ezbroadcast <message>) will broadcast a raw message to the server");
-			plugin.getLogger()
-			.info("Valid placeholders for commands are %player% %world% %rankfrom% %rankto% %balance% %cost%");
-			plugin.getLogger()
-			.info("EZRanksLite will automatically take money from the player when a rankup is successful through Vault!");
+			plugin.getLogger().info("Create your first rankup with /ezadmin createrankup <rankfrom> <rankto> <cost>");
+			plugin.getLogger().info("Modify the configuration section in the rankups.yml for the rankup you just created, then use /ezadmin reload to update your changes");
+			plugin.getLogger().info("You need to include the command(s) to rank the player up in rankup_commands - pex user %player% group set %rankto%, manuadd %player% %rankto% %world%");
+			plugin.getLogger().info("You can also use ezcommands in the rankup_commands section \n(ezmsg <message>) will send a raw message to the player ranking up \n(ezbroadcast <message>) will broadcast a raw message to the server");
+			plugin.getLogger().info("Valid placeholders for commands are %player% %world% %rankfrom% %rankto% %balance% %cost%");
+			plugin.getLogger().info("EZRanksLite will automatically take money from the player when a rankup is successful through Vault!");
 			return "No rankups loaded!";
 		}
 			
@@ -279,22 +275,16 @@ public class RankupFile {
 		for (String rank : getRanks()) {
 			
 			if (getRankupSections(rank).isEmpty()) {
-				plugin.getLogger().warning(rank
-						+ " does not contain any rankups to rank up to in the rankups.yml!");
+				plugin.getLogger().warning(rank+" does not contain any rankups to rank up to in the rankups.yml!");
 				continue;
 			}
 
 			if (!plugin.getHooks().isValidServerGroup(rank)) {
-				plugin.getLogger().warning(rank
-						+ " does not exist in the server permissions plugin!");
-				plugin.getLogger()
-						.warning("Skipping rankup validation for rank: "
-								+ rank);
+				plugin.getLogger().warning(rank+" does not exist in the server permissions plugin!");
+				plugin.getLogger().warning("Skipping rankup validation for rank: "+rank);
 				continue;
 			}
 			
-			
-			//a perm group is named this
 			EZRank baserank = new EZRank(rank);
 			
 			if (checkValidRankOptions(rank)) {
@@ -319,14 +309,8 @@ public class RankupFile {
 				}
 
 				if (!plugin.getHooks().isValidServerGroup(rankTo)) {
-					plugin.getLogger()
-							.warning(rank
-									+ " has a rankup to rank "
-									+ rankTo
-									+ "  that does not exist in the server permissions plugin!");
-					plugin.getLogger()
-							.warning("Skipping validation for rankup: "
-									+ rank + " to " + rankTo);
+					plugin.getLogger().warning(rank+" has a rankup to rank "+rankTo+" that does not exist in the server permissions plugin!");
+					plugin.getLogger().warning("Skipping validation for rankup: "+rank+" to "+rankTo);
 					continue;
 				}
 
@@ -337,28 +321,27 @@ public class RankupFile {
 				EZRankup r = new EZRankup(rankTo);
 				
 				if (!plugin.isDouble(getCost(rank, rankTo))) {
-					plugin.getLogger()
-					.warning(rank
-							+ " has a rankup to rank "
-							+ rankTo
-							+ " that has an invalid cost!");
+					plugin.getLogger().warning(rank+" has a rankup to rank "+rankTo+" that has an invalid cost!");
 					continue;
 				}
+				
 				r.setActive(isActive(rank, rankTo));
 				r.setConfirmToRank(confirmToRankup(rank, rankTo));
 				r.setPrefix(getRankupPrefix(rank, rankTo));
 				r.setCost(getCost(rank, rankTo));
 				r.setRequirementMsg(getRequirementMessage(rank, rankTo));
 				r.setCommands(getRankupCommands(rank, rankTo));
+				
 				baserank.addRankup(rankTo, r);
+				
 				rankups++;
 			}
+			
 			plugin.getRankHandler().putRankData(rank, baserank);
 			ranks++;
 		}
 
-        return ranks + " Ranks loaded with " + rankups
-                + " unique RankUps!";
+        return ranks+" Ranks loaded with "+rankups+" unique RankUps!";
 
 	}
 }
