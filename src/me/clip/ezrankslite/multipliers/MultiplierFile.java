@@ -113,14 +113,14 @@ public class MultiplierFile {
 		String prefix = "rankup_cost_multipliers.example";
 		if (!this.dataConfig.contains("rankup_cost_multipliers")) {
 			this.dataConfig.options().copyDefaults(true);
-			this.dataConfig.set(prefix+".priority", 1.2);
+			this.dataConfig.set(prefix+".priority", 1);
 			this.dataConfig.set(prefix+".permission", "some.multiplier.permission");
 			this.dataConfig.set(prefix+".percentage", 1.5);
 			save();
 		}
 		else if (this.dataConfig.getConfigurationSection("rankup_cost_multipliers").getKeys(false) == null
 				|| this.dataConfig.getConfigurationSection("rankup_cost_multipliers").getKeys(false).isEmpty()) {
-			this.dataConfig.set(prefix+".priority", 1.2);
+			this.dataConfig.set(prefix+".priority", 1);
 			this.dataConfig.set(prefix+".permission", "some.multiplier.permission");
 			this.dataConfig.set(prefix+".percentage", 1.5);
 			save();
@@ -131,7 +131,7 @@ public class MultiplierFile {
 	public void createExampleDiscount() {
 		String prefix = "rankup_cost_discounts.example";
 		if (!this.dataConfig.isConfigurationSection("rankup_cost_discounts")) {
-			this.dataConfig.set(prefix+".priority", 1.2);
+			this.dataConfig.set(prefix+".priority", 1);
 			this.dataConfig.set(prefix+".permission", "some.discount.permission");
 			this.dataConfig.set(prefix+".percentage", 2.2);
 			save();
