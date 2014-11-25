@@ -47,9 +47,11 @@ public class RankupCommand implements CommandExecutor {
 
 	// reset confirmation list <playername>
 	private static List<String> reset = new ArrayList<String>();
+	
 	// rankup confirmation map <playername, rankname>
 	private static HashMap<String, String> wtc = new HashMap<String, String>();
 
+	//rankup cooldown list
 	private static List<String> cooldown = new ArrayList<String>();
 
 	@Override
@@ -63,51 +65,44 @@ public class RankupCommand implements CommandExecutor {
 
 		Player p = (Player) sender;
 
-		//get players group so we know what to do
 		String rank = plugin.getHooks().getGroup(p);
 
-		//check if the rank the player is in has data loaded from rankups.yml
 		if (!plugin.getRankHandler().hasRankData(rank)) {
-			plugin.sms(p, Lang.RANKUP_NO_RANKUPS_AVAILABLE
-					.getConfigValue(new String[] { rank }));
+			
+			plugin.sms(p, Lang.RANKUP_NO_RANKUPS_AVAILABLE.getConfigValue(new String[] { rank }));
 			return true;
 		}
 
-		//baserank object, holds rankup objects and options
 		EZRank ezrank = plugin.getRankHandler().getRankData(rank);
 
-		//if the ezrank is null
 		if (ezrank == null) {
-			plugin.sms(p, Lang.RANKUP_NO_RANKUPS_AVAILABLE
-					.getConfigValue(new String[] { rank }));
+			
+			plugin.sms(p, Lang.RANKUP_NO_RANKUPS_AVAILABLE.getConfigValue(new String[] { rank }));
 			return true;
 		}
 
 		if (args.length == 0) {
 			
-			if (plugin.useRankupCooldown()) {
-				if (!p.hasPermission("ezadmin.cooldown.bypass")) {
-					if (cooldown.contains(p.getName())) {
-						plugin.sms(p, Lang.RANKUP_ON_COOLDOWN
-								.getConfigValue(new String[] { plugin
-										.getRankupCooldownTime() + "" }));
-						return true;
-					}
+			if (plugin.useRankupCooldown() && !p.hasPermission("ezadmin.cooldown.bypass")) {
+				
+				if (cooldown.contains(p.getName())) {
+					
+					plugin.sms(p, Lang.RANKUP_ON_COOLDOWN.getConfigValue(new String[] { 
+								  String.valueOf(plugin.getRankupCooldownTime()) }));
+					return true;
 				}
 			}
 			
-			//ezrank can tell us a lot of things
-			
 			if (ezrank.isLastRank()) {
-				plugin.sms(p, Lang.RANKUP_LAST_RANK
-						.getConfigValue(new String[] { rank }));
+				
+				plugin.sms(p, Lang.RANKUP_LAST_RANK.getConfigValue(new String[] { rank }));
 				return true;
 			}
 			
 			
 			if (!ezrank.hasRankups()) {
-				plugin.sms(p, Lang.RANKUP_NO_RANKUPS_AVAILABLE
-						.getConfigValue(new String[] { rank }));
+				
+				plugin.sms(p, Lang.RANKUP_NO_RANKUPS_AVAILABLE.getConfigValue(new String[] { rank }));
 				return true;
 			}
 
@@ -116,9 +111,7 @@ public class RankupCommand implements CommandExecutor {
 				EZRankup ru = ezrank.getRankups().iterator().next();
 
 				if (!ru.isActive()) {
-					plugin.sms(
-							p,
-							Lang.RANKUP_DISABLED.getConfigValue(new String[] {
+					plugin.sms(p, Lang.RANKUP_DISABLED.getConfigValue(new String[] {
 									ru.getRank(), rank, ezrank.getPrefix() }));
 					return true;
 				}
@@ -196,7 +189,12 @@ public class RankupCommand implements CommandExecutor {
 					return true;
 				}
 
-				plugin.getPlayerhandler().rankupPlayer(p, ezrank, ru, needed);
+				if (!plugin.getPlayerhandler().rankupPlayer(p, ezrank, ru, needed)) {
+					plugin.debug(false, "Player "+p.getName()+" attempted to rankup from "+ezrank.getRank()+" "+
+							"to "+ru.getRank()+" but the rankup was unsuccessful!");
+					plugin.sms(p, "&cYour rankup was unsuccessful! Please contact an admin!");
+					return true;
+				}
 
 				if (plugin.useRankupCooldown()) {
 
@@ -411,20 +409,18 @@ public class RankupCommand implements CommandExecutor {
 
 			if (balance < needed) {
 				for (String msg : rankup.getRequirementMsg()) {
-					plugin.sms(
-							p,
-							msg.replace("%rankfrom%", ezrank.getRank())
-								.replace("%rankto%", rankup.getRank())
-								.replace("%rankprefix%", ezrank.getPrefix())
-								.replace("%rankupprefix%", rankup.getPrefix())
-								.replace("%player%", p.getName())
-								.replace("%progress%", plugin.getBoardHandler().getProgress(balance, String.valueOf(needed))+"")
-								.replace("%progressbar%", plugin.getBoardHandler().getProgressBar(plugin.getBoardHandler().getProgress(balance, String.valueOf(needed))))
-								.replace("%difference%", EZRanksLite.getDifference(balance, needed))
-								.replace("%costdifference%", EZRanksLite.getDifference(balance, needed))
-								.replace("%world%", p.getWorld().getName())
-								.replace("%balance%", EZRanksLite.fixMoney(balance))
-								.replace("%cost%", EZRanksLite.fixMoney(needed)));
+					plugin.sms(p, msg.replace("%rankfrom%", ezrank.getRank())
+								     .replace("%rankto%", rankup.getRank())
+								     .replace("%rankprefix%", ezrank.getPrefix())
+								     .replace("%rankupprefix%", rankup.getPrefix())
+								     .replace("%player%", p.getName())
+								     .replace("%progress%", plugin.getBoardHandler().getProgress(balance, String.valueOf(needed))+"")
+								     .replace("%progressbar%", plugin.getBoardHandler().getProgressBar(plugin.getBoardHandler().getProgress(balance, String.valueOf(needed))))
+								     .replace("%difference%", EZRanksLite.getDifference(balance, needed))
+								     .replace("%costdifference%", EZRanksLite.getDifference(balance, needed))
+								     .replace("%world%", p.getWorld().getName())
+								     .replace("%balance%", EZRanksLite.fixMoney(balance))
+								     .replace("%cost%", EZRanksLite.fixMoney(needed)));
 				}
 				return true;
 			}
@@ -441,6 +437,7 @@ public class RankupCommand implements CommandExecutor {
 									rankup.getPrefix() }));
 
 					final String plName = p.getName();
+					
 					Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin,
 							new Runnable() {
 								public void run() {
@@ -470,16 +467,19 @@ public class RankupCommand implements CommandExecutor {
 			Bukkit.getServer().getPluginManager().callEvent(rankupEvent);
 			
 			if (rankupEvent.isCancelled()) {
-				plugin.debug(false, p.getName() + " attempted to rankup from " + ezrank.getRank()
-								+ " to " + rankup.getRank());
+				plugin.debug(false, p.getName()+" attempted to rankup from "+ezrank.getRank()+" to "+rankup.getRank());
 				plugin.debug(false, "but the rankup event was cancelled by another plugin!");
 				return true;
 			}
 
-			plugin.getPlayerhandler().rankupPlayer(p, ezrank, rankup, needed);
+			if (!plugin.getPlayerhandler().rankupPlayer(p, ezrank, rankup, needed)) {
+				plugin.debug(false, "Player "+p.getName()+" attempted to rankup from "+ezrank.getRank()+" "+
+						"to "+rankup.getRank()+" but the rankup was unsuccessful!");
+				plugin.sms(p, "&cYour rankup was unsuccessful! Please contact an admin!");
+				return true;
+			}
 
-			plugin.debug(false, p.getName() + " ranked up from " + ezrank.getRank()
-							+ " to " + rankup.getRank());
+			plugin.debug(false, p.getName()+" ranked up from "+ezrank.getRank()+" to "+rankup.getRank());
 
 			if (plugin.useRankupCooldown()) {
 

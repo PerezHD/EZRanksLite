@@ -204,6 +204,7 @@ public class EZRanksLite extends JavaPlugin {
 		sbOptions = null;
 		staffOnline = null;
 		ScoreboardHandler.staffToggled = null;
+		boardHandler.clearBoards();
 		instance = null;
 	}
 
@@ -422,47 +423,135 @@ public class EZRanksLite extends JavaPlugin {
 
 	public static String fixMoney(double amount) {
 
-		if (amount >= 1000000000000000.0D)
+		if (amount >= 1000000000000000.0D) {
+			
 			if (fixMillions) {
-				return String.format("%.2f" + quads, new Object[] { Double
-						.valueOf(amount / 1000000000000000.0D) });
+				
+				String format = String.format("%.2f", new Object[] { Double.valueOf(amount / 1000000000000000.0D) });
+				
+				int p = format.indexOf(".");
+				
+				String p2 = format.substring(p+1);
+					
+				if (p2.endsWith("0")){
+					if (p2.startsWith("0")) {
+						format = format.substring(0, format.length()-3);
+					}
+					else {
+						format = format.substring(0, format.length()-1);
+					}
+				}
+				
+				return format+quads;
 			} else {
 				long send = (long) amount;
-				return send + "";
-			}
-		if (amount >= 1000000000000.0D)
-			if (fixMillions) {
-				return String.format("%.2f" + trillions, new Object[] { Double
-						.valueOf(amount / 1000000000000.0D) });
-			} else {
-				long send = (long) amount;
-				return send + "";
-			}
-		else if (amount >= 1000000000.0D)
-			if (fixMillions) {
-				return String
-						.format("%.2f" + billions, new Object[] { Double
-								.valueOf(amount / 1000000000.0D) });
-			} else {
-				long send = (long) amount;
-				return send + "";
-			}
-		else if (amount >= 1000000.0D) {
-			if (fixMillions) {
-				return String.format("%.2f" + millions,
-						new Object[] { Double.valueOf(amount / 1000000.0D) });
-			} else {
-				long send = (long) amount;
-				return send + "";
-			}
-		} else if (amount >= 1000.0D) {
-			if (fixThousands) {
-				return String.format("%.2f" + thousands,
-						new Object[] { Double.valueOf(amount / 1000.0D) });
+				return String.valueOf(send);
 			}
 		}
-		return String.format("%.2f",
-				new Object[] { amount });
+		
+		else if (amount >= 1000000000000.0D) {
+			if (fixMillions) {
+				
+				String format = String.format("%.2f", new Object[] { Double.valueOf(amount / 1000000000000.0D) });
+				
+				int p = format.indexOf(".");
+				
+				String p2 = format.substring(p+1);
+					
+				if (p2.endsWith("0")){
+					
+					if (p2.startsWith("0")) {
+						format = format.substring(0, format.length()-3);
+					}
+					else {
+						format = format.substring(0, format.length()-1);
+					}
+				}
+				
+				return format+trillions;
+			} else {
+				long send = (long) amount;
+				return String.valueOf(send);
+			}
+		}
+		
+		else if (amount >= 1000000000.0D) {
+			if (fixMillions) {
+				
+				String format = String.format("%.2f", new Object[] { Double.valueOf(amount / 1000000000.0D) });
+				
+
+				int p = format.indexOf(".");
+				
+				String p2 = format.substring(p+1);
+					
+				if (p2.endsWith("0")){
+					
+					if (p2.startsWith("0")) {
+						format = format.substring(0, format.length()-3);
+					}
+					else {
+						format = format.substring(0, format.length()-1);
+					}
+				}
+				
+				return format+billions;
+				
+			} else {
+				long send = (long) amount;
+				return String.valueOf(send);
+			}
+		}
+		
+		else if (amount >= 1000000.0D) {
+			if (fixMillions) {
+				String format = String.format("%.2f", new Object[] { Double.valueOf(amount / 1000000.0D) });
+				
+				int p = format.indexOf(".");
+				
+				String p2 = format.substring(p+1);
+					
+				if (p2.endsWith("0")){
+					
+					if (p2.startsWith("0")) {
+						format = format.substring(0, format.length()-3);
+					}
+					else {
+						format = format.substring(0, format.length()-1);
+					}
+				}
+				
+				return format+millions;
+			} else {
+				long send = (long) amount;
+				return String.valueOf(send);
+			}
+		} 
+		
+		else if (amount >= 1000.0D) {
+			if (fixThousands) {
+				String format = String.format("%.2f", new Object[] { Double.valueOf(amount / 1000.0D) });
+
+				int p = format.indexOf(".");
+				
+				String p2 = format.substring(p+1);
+					
+				if (p2.endsWith("0")){
+					
+					if (p2.startsWith("0")) {
+						format = format.substring(0, format.length()-3);
+					}
+					else {
+						format = format.substring(0, format.length()-1);
+					}
+				}
+				
+				return format+thousands;
+			}
+		}
+		
+		int amt = (int) amount;
+		return String.valueOf(amt);
 	}
 
 	public boolean isDouble(String s) {

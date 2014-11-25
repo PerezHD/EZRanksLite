@@ -46,6 +46,10 @@ public class ScoreboardHandler {
 	protected HashMap<String, EZScoreboard> boards = new HashMap<String, EZScoreboard>();
 	
 	public static List<String> staffToggled = new ArrayList<String>();
+	
+	public void clearBoards() {
+		boards = null;
+	}
 
 	public boolean hasScoreboard(Player p) {
 		return boards.containsKey(p.getName())

@@ -66,8 +66,7 @@ public class EZScoreboard {
 	}
 
 	public void setLine(String text, Integer score) {
-		Preconditions.checkArgument(text.length() < 48,
-				"text cannot be over 48 characters in length");
+		Preconditions.checkArgument(text.length() < 48, "text cannot be over 48 characters in length");
 		text = fixDuplicates(text);
 		scores.put(text, score);
 	}

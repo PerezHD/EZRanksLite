@@ -46,31 +46,32 @@ public class EZAdminCommand implements CommandExecutor {
 	private static List<String> wtc = new ArrayList<String>();
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label,
-			String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
 		if (!(sender instanceof Player)) {
+			
 			return console.onCommand(sender, cmd, label, args);
 		}
 
 		Player p = (Player) sender;
 
-		if (!plugin.getVault().hasPerm(p, "ezranks.admin")) {
+		if (!p.hasPermission("ezranks.admin")) {
+			
 			plugin.sms(p, "&cYou do not have permission to use that command!");
 			return true;
 		}
 
 		if (args.length == 0) {
-			plugin.sms(p, "&fEZ&7Ranks&bLite &7version: &b"
-					+ plugin.getDescription().getVersion());
+			
+			plugin.sms(p, "&fEZ&7Ranks&bLite &7version: &b"+plugin.getDescription().getVersion());
 			plugin.sms(p, "&fCreated by: &bextended_clip");
 			plugin.sms(p, "&7Use &e/ezadmin help &7for admin commands");
+			
 			return true;
-		}
-
+		} 
 		else if (args[0].equalsIgnoreCase("help")) {
-			plugin.sms(p, "&fEZ&7Admin &b"
-					+ plugin.getDescription().getVersion() + " &eHelp");
+			
+			plugin.sms(p, "&fEZ&7Admin &b"+plugin.getDescription().getVersion()+" &eHelp");
 			plugin.sms(p, "&a/ezadmin createrankup <rankfrom> <rankto> <cost>");
 			plugin.sms(p, "&fCreate a new rankup");
 			plugin.sms(p, "&a/ezadmin setlastrank <rank> <boolean>");
@@ -90,8 +91,7 @@ public class EZAdminCommand implements CommandExecutor {
 			plugin.sms(p, "&a/ezadmin setcost <rankfrom> <rankto> <cost>");
 			plugin.sms(p, "&fdisable a rankup that is enabled");
 			plugin.sms(p, "&a/ezadmin addcmd <rankfrom> <rankto> <command>");
-			plugin.sms(p,
-					"&fadd a command to be executed when a player ranks up");
+			plugin.sms(p, "&fadd a command to be executed when a player ranks up");
 			plugin.sms(p, "&a/ezadmin delcmd <rankfrom> <rankto> <command>");
 			plugin.sms(p, "&fremove an active rankup command");
 			plugin.sms(p, "&a/sbtoggle <player>");
@@ -99,17 +99,18 @@ public class EZAdminCommand implements CommandExecutor {
 			plugin.sms(p, "&a/sbrefresh <player>");
 			plugin.sms(p, "&frefresh a players scoreboard");
 			return true;
-		}
-		
+		} 
 		else if (args[0].equalsIgnoreCase("setlastrank")
 				|| args[0].equalsIgnoreCase("slr")) {
 			
 			if (!p.hasPermission("ezranks.admin.create")) {
+				
 				plugin.sms(p, "&cYou don't have permission to do this!!");
 				return true;
 			}
 
 			if (args.length != 3) {
+				
 				plugin.sms(p, "&cIncorrect usage!");
 				plugin.sms(p, "&bType &f/ezadmin help &bfor help");
 				return true;
@@ -118,6 +119,7 @@ public class EZAdminCommand implements CommandExecutor {
 			String rank = args[1];
 			
 			if (!isB(args[2].toUpperCase())) {
+				
 				plugin.sms(p, "&cIncorrect usage!");
 				plugin.sms(p, "&bType &f/ezadmin help &bfor help");
 				return true;
@@ -129,16 +131,23 @@ public class EZAdminCommand implements CommandExecutor {
 				boolean is = Boolean.valueOf(args[2]);
 				
 				plugin.getRankFile().setLastRank(rank, is);
+				
 				plugin.getRankFile().reload();
 				plugin.getRankFile().save();
+				
 				String loaded = plugin.getRankFile().loadRankupsFromFile();
+				
 				plugin.sms(p, loaded);
+				
 				if (is) {
-				plugin.sms(p, rank+" &awill now be recognized as a last rank!");
+					
+					plugin.sms(p, rank+" &awill now be recognized as a last rank!");
 				}
 				else {
+					
 					plugin.sms(p, rank+" &awill not be recognized as a last rank!");
 				}
+				
 				return true;
 			} else {
 
@@ -146,11 +155,8 @@ public class EZAdminCommand implements CommandExecutor {
 				plugin.sms(p, "&f" + rank + "&b is not a valid server group");
 				
 				return true;
-
 			}
-
 		}
-
 		else if (args[0].equalsIgnoreCase("createrankup")
 				|| args[0].equalsIgnoreCase("cr")) {
 
@@ -200,22 +206,20 @@ public class EZAdminCommand implements CommandExecutor {
 					isRankup = true;
 				}
 
-				if (isRankup == true) {
+				if (isRankup) {
 					plugin.sms(p, "&4Rankup creation failed:");
 					plugin.sms(p, "&bThere is already a rankup for &f"
 							+ rankFrom + "&b to &f" + rankTo + " &b!");
 					return true;
 				}
-				plugin.sms(p, "&bRankup &f" + rankFrom + " &bto &f" + rankTo
-						+ " &bloading...");
+				
+				plugin.sms(p, "&bRankup &f"+rankFrom+" &bto &f"+rankTo+" &bloading...");
 				plugin.getRankFile().createRankSection(rankFrom, rankTo, cost);
 				plugin.getRankFile().reload();
 				plugin.sms(p, plugin.getRankFile().loadRankupsFromFile());
 				plugin.sms(p, "&aRankup creation successful:");
-				plugin.sms(p,
-						"&eYou may now edit the rankup inside of the rankups.yml");
-				plugin.sms(p,
-						"&ewhen you are finished editing, use /ezadmin reload");
+				plugin.sms(p, "&eYou may now edit the rankup inside of the rankups.yml");
+				plugin.sms(p, "&ewhen you are finished editing, use /ezadmin reload");
 				return true;
 			} else {
 

@@ -82,7 +82,7 @@ public class RankupFile {
 		
 			this.dataConfig.set(rank + ".options.last_rank", b);
 
-			this.dataConfig.set(rank + ".options.current_prefix", "&8[&c"+rank+"&8]");
+			this.dataConfig.set(rank + ".options.rank_prefix", "&8[&c"+rank+"&8]");
 		
 			this.dataConfig.set(rank + ".options.allow_reset", Boolean.valueOf(false));
 		
@@ -105,7 +105,7 @@ public class RankupFile {
 		}
 		this.dataConfig.set(rank + ".options.last_rank", false);
 		if (!this.dataConfig.contains(rank + ".options.rank_prefix")) {
-			this.dataConfig.set(rank + ".options.current_prefix", "&8[&c"+rank+"&8]");
+			this.dataConfig.set(rank + ".options.rank_prefix", "&8[&c"+rank+"&8]");
 		}
 		if (!this.dataConfig.contains(rank + ".options.allow_reset")) {
 			this.dataConfig.set(rank + ".options.allow_reset", Boolean.valueOf(false));
@@ -195,6 +195,10 @@ public class RankupFile {
 		if (!containsEntry(rank + ".options.ranks_display_order")) {
 			missingEntry = true;
 			dataConfig.set(rank + ".options.ranks_display_order", 1);
+		}
+		if (containsEntry(rank + ".options.current_prefix")) {
+			missingEntry = true;
+			dataConfig.set(rank + ".options.current_prefix", null);
 		}
 		if (!containsEntry(rank + ".options.rank_prefix")) {
 			missingEntry = true;
