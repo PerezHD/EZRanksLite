@@ -1,5 +1,5 @@
 /* This file is a class of EZRanksLite
- * @author extended_clip
+ * @author Ryan McCarthy
  * 
  * 
  * EZRanksLite is free software: you can redistribute it and/or modify
@@ -28,14 +28,21 @@ import me.clip.ezrankslite.rankdata.EZRankup;
 
 import org.bukkit.entity.Player;
 
+/**
+ * EZRanksLite API class 
+ * @author Ryan McCarthy
+ */
 public class EZAPI {
 
 	private EZRanksLite plugin;
 	
+	/**
+	 * EZAPI constructor
+	 * @param instance EZRanksLite plugin
+	 */
 	public EZAPI(EZRanksLite instance) {
 		plugin = instance;
 	}
-	
 	
 	/**
 	 * get all server groups loaded by the permissions plugin through Vault
@@ -166,7 +173,6 @@ public class EZAPI {
 		}
 		
 		cost = CostHandler.getMultiplier(p, cost);
-		
 		cost = CostHandler.getDiscount(p, cost);
 		
 		return plugin.getBoardHandler().getProgress(getEconBalance(p), String.valueOf(cost));
@@ -198,9 +204,6 @@ public class EZAPI {
 	public String getProgressBar(int progress) {
 		return plugin.getBoardHandler().getProgressBar(progress);
 	}
-	
-
-	
 	
 	/*
 	 * EZRank and EZRankup methods
@@ -268,7 +271,6 @@ public class EZAPI {
 		return null;
 	}
 	
-	
 	/*
 	 * scoreboard 
 	 */
@@ -287,13 +289,10 @@ public class EZAPI {
 		plugin.getPlaceholders().setPlayerPlaceholder(playername, identifier, value);
 	}
 	
-
-	
 	@Deprecated
 	public void setCustomPlaceholder(String playername, String identifier, String value) {
 		plugin.getPlaceholders().setPlayerPlaceholder(playername, identifier, value);
 	}
-	
 	
 	/**
 	 * set a custom placeholder for a specific player in the EZRanksLite scoreboard.

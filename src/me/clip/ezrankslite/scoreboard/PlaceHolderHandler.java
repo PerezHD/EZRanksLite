@@ -1,5 +1,5 @@
 /* This file is a class of EZRanksLite
- * @author extended_clip
+ * @author Ryan McCarthy
  * 
  * 
  * EZRanksLite is free software: you can redistribute it and/or modify

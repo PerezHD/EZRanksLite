@@ -1,5 +1,5 @@
 /* This file is a class of EZRanksLite
- * @author extended_clip
+ * @author Ryan McCarthy
  * 
  * 
  * EZRanksLite is free software: you can redistribute it and/or modify
@@ -149,7 +149,7 @@ public class PlayerRankupHandler {
 		
 		for (String cmd : commands) {
 			
-			if (cmd.startsWith("ezmsg") || cmd.startsWith("ezmessage")) {
+			if (cmd.startsWith("ezmsg ") || cmd.startsWith("ezmessage ")) {
 				
 				plugin.sms(p, cmd.replace("%rankfrom%", baseRank.getRank())
 						         .replace("%rankto%", rankup.getRank())
@@ -162,7 +162,7 @@ public class PlayerRankupHandler {
 						         .replace("ezmsg ", "")
 						         .replace("ezmessage ", ""));
 				
-			} else if (cmd.startsWith("ezbroadcast") || cmd.startsWith("ezbcast")) {
+			} else if (cmd.startsWith("ezbroadcast ") || cmd.startsWith("ezbcast ")) {
 				
 				plugin.bcast(cmd.replace("%rankfrom%", baseRank.getRank())
 							    .replace("%rankto%", rankup.getRank())

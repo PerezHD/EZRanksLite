@@ -12,7 +12,7 @@ public class Updater {
 
 		private EZRanksLite plugin;
 		
-	    private static int resource = 762;
+	    final int resourceId = 762;
 	    private static String latestVersion = "";
 	    private static boolean updateAvailable = false;
 
@@ -22,15 +22,12 @@ public class Updater {
 
 	    private String getSpigotVersion() {
 	        try {
-	            HttpURLConnection con = (HttpURLConnection) new URL(
-	                    "http://www.spigotmc.org/api/general.php").openConnection();
-	            con.setDoOutput(true);
-	            con.setRequestMethod("POST");
-	            con.getOutputStream()
-	                    .write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=" + resource)
+	            HttpURLConnection connection = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php").openConnection();
+	            connection.setDoOutput(true);
+	            connection.setRequestMethod("POST");
+	            connection.getOutputStream().write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource="+resourceId)
 	                            .getBytes("UTF-8"));
-	            String version = new BufferedReader(new InputStreamReader(
-	                    con.getInputStream())).readLine();
+	            String version = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
 	            if (version.length() <= 7) {
 	                return version;
 	            }
